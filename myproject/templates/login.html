@@ -66,9 +66,15 @@
   <body>
     <div class="container">
       <h2 id="form-title">Login</h2>
-      <form id="auth-form">
-        <input type="text" id="username" placeholder="Username" required />
-        <input type="password" id="password" placeholder="Password" required />
+      <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" required />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+        />
         <button type="submit">Login</button>
       </form>
       <span class="toggle-link" id="toggle-form"
@@ -82,7 +88,7 @@
       const toggleLink = document.getElementById("toggle-form");
 
       toggleLink.addEventListener("click", () => {
-        if (formTitle.textContent === "Login") {
+        if (formTitle.textContent == "Login") {
           formTitle.textContent = "Sign Up";
           authForm.innerHTML = `
                     <input type="text" id="username" placeholder="Username" required>
