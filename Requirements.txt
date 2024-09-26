@@ -1,6 +1,4 @@
-Django == 5.1.1
-django-google-maps == 0.13.0
-mssql-django
+Django == 5.0.9
+mssql-django == 1.5
 pyodbc == 5.1.0
-django-pyodbc-azure==2.1.0.0
 mysqlclient==2.2.4
