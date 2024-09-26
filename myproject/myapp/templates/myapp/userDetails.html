@@ -1,0 +1,42 @@
+{% extends 'main.html' %} {% block content %}
+<div class="profile-container">
+  <h2>Edit Profile</h2>
+  <form id="profile-form" method="POST" enctype="multipart/form-data">
+    <img
+      src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}/static/default-profile.png{% endif %}"
+      alt="Profile Picture"
+      id="profile-picture-preview"
+    />
+    <input
+      type="file"
+      id="profile_picture_input"
+      name="profile_picture"
+      accept="image/*"
+    />
+
+    <label for="full_name">Full Name:</label>
+    <input
+      type="text"
+      id="full_name"
+      name="full_name"
+      value="{{ user.full_name }}"
+    />
+
+    <label for="bio">Bio:</label>
+    <textarea id="bio" name="bio" rows="4">{{ user.bio }}</textarea>
+
+    <label for="location">Location:</label>
+    <input
+      type="text"
+      id="location"
+      name="location"
+      value="{{ user.location }}"
+    />
+
+    <button type="submit">Save Changes</button>
+    <p class="confirmation" id="confirmation-msg">
+      Profile updated successfully!
+    </p>
+  </form>
+</div>
+{% endblock %}

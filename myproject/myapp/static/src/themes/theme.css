@@ -1,0 +1,93 @@
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #f4f4f4;
+  --font-family: 'Arial', sans-serif;
+  --heading-font-size: 24px;
+  --text-font-size: 16px;
+  --button-bg-color: #5cb85c;
+  --button-hover-bg-color: #4cae4c;
+  --border-radius: 8px;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--secondary-color);
+  margin: 0;
+  padding: 0;
+}
+
+nav {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+nav ul li {
+  margin: 0 20px;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: var(--text-font-size);
+}
+
+nav ul li a:hover {
+  text-decoration: underline;
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.container {
+  background-color: white;
+  padding: 40px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: var(--heading-font-size);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: var(--border-radius);
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--button-bg-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: var(--text-font-size);
+}
+
+button:hover {
+  background-color: var(--button-hover-bg-color);
+}

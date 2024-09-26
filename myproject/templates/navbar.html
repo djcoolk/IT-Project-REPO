@@ -1,7 +1,8 @@
 <nav>
   <ul>
-    <a href="/home">Home</a>
-    <a href="/login">Login</a>
-    <a href="/professionals">Profesionals</a>
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'login' %}">Login</a></li>
+    <li><a href="{% url 'professionals' %}">Professionals</a></li>
+    <li><a href="{% url 'userDetails' %}">User Details</a></li>
   </ul>
 </nav>
