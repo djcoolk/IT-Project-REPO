@@ -1,12 +1,33 @@
-{% extends 'main.html' %} {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Title</title>
-  </head>
-  <body>
-    <h1>professionals PAGE.</h1>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counselors</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<div class=".container"></div>
+<body>
+<header>
+  <h1>Available Counselors</h1>
+</header>
+
+<main>
+  <div class="counselor-list">
+    <!-- Example of a single counselor's section, repeated for each counselor -->
+    <div class="counselor">
+      <h2>Dr. Jane Doe</h2>
+      <p class="bio">Dr. Jane Doe has over 20 years of experience in clinical psychology and specializes in child therapy. She is dedicated to providing compassionate and personalized care.</p>
+      <h3>Available Times</h3>
+      <ul class="available-times">
+        <li>Monday: 10:00 AM - 12:00 PM</li>
+        <li>Wednesday: 2:00 PM - 4:00 PM</li>
+        <li>Friday: 9:00 AM - 11:00 AM</li>
+      </ul>
+    </div>
+
+    <!-- Additional counselors can be added here in the same format -->
+  </div>
+</main>
+</body>
 </html>
-{% endblock %}
