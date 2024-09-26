@@ -1,5 +1,4 @@
 -- Drop the database if it exists to refresh it
-IF DB_ID('WellnessWhisperDB') IS NOT NULL
 BEGIN
     DROP DATABASE WellnessWhisperDB;
 END;
@@ -75,8 +74,8 @@ CREATE TABLE bookings (
     booking_date DATETIME,
     status VARCHAR(50),
     PRIMARY KEY(booking_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (counsellor_id) REFERENCES counsellor_profiles(counsellor_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    FOREIGN KEY (counsellor_id) REFERENCES counsellor_profiles(counsellor_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     FOREIGN KEY (session_id) REFERENCES sessions(session_id) ON DELETE SET NULL
 );
 GO
@@ -91,8 +90,8 @@ CREATE TABLE chat_logs (
     timestamp DATETIME,
     PRIMARY KEY(chat_id),
     FOREIGN KEY (session_id) REFERENCES sessions(session_id) ON DELETE CASCADE,
-    FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE CASCADE
+    FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 GO
 
@@ -107,8 +106,8 @@ CREATE TABLE call_logs (
     status VARCHAR(50),
     PRIMARY KEY(call_id),
     FOREIGN KEY (session_id) REFERENCES sessions(session_id) ON DELETE CASCADE,
-    FOREIGN KEY (caller_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (callee_id) REFERENCES users(user_id) ON DELETE CASCADE
+    FOREIGN KEY (caller_id) REFERENCES users(user_id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    FOREIGN KEY (callee_id) REFERENCES users(user_id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 GO
 
