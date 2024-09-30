@@ -1,0 +1,84 @@
+{% extends 'admin_main.html' %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+        }
+        .stat-card h3 {
+            margin-bottom: 10px;
+        }
+        .notifications {
+            height: 250px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Admin Dashboard</h1>
+
+        <div class="row mb-4">
+            <!-- Active Users Stat -->
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <h3>Active Users</h3>
+                    <p class="display-4">1,024</p>
+                </div>
+            </div>
+            <!-- Total Bookings Stat -->
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <h3>Total Bookings</h3>
+                    <p class="display-4">256</p>
+                </div>
+            </div>
+            <!-- Total Counsellor Availabilities -->
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <h3>Counsellor Availabilities</h3>
+                    <p class="display-4">75</p>
+                </div>
+            </div>
+            <!-- Total Sessions -->
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <h3>Sessions Held</h3>
+                    <p class="display-4">312</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Notifications -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="stat-card">
+                    <h3>Recent Notifications</h3>
+                    <div class="notifications">
+                        <ul class="list-group">
+                            <!-- Dummy Notifications -->
+                            <li class="list-group-item">New user registration: User ID 453</li>
+                            <li class="list-group-item">Booking made for Counsellor ID 102</li>
+                            <li class="list-group-item">Session canceled: Session ID 301</li>
+                            <li class="list-group-item">Chatbot conversation logged: Chat ID 532</li>
+                            <li class="list-group-item">Notification sent: Reminder for Session ID 405</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+{% endblock %}

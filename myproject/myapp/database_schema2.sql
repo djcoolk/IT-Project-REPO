@@ -158,3 +158,38 @@ CREATE TABLE chatbot_logs (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 GO
+
+-- 11. Chatbot Logs Table
+CREATE TABLE payment_history (
+    payment_id INT NOT NULL IDENTITY(1,1),
+    user_id INT,
+    booking_id INT,
+    amount DECIMAL(10, 2),
+    payment_date DATETIME,
+    payment_method VARCHAR(50),
+    PRIMARY KEY(payment_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
+);
+
+-- 11. Chatbot Logs Table
+    CREATE TABLE subscription_plans (
+    plan_id INT NOT NULL IDENTITY(1,1),
+    plan_name VARCHAR(255),
+    plan_description TEXT,
+    price DECIMAL(10, 2),
+    duration_days INT, -- Number of days the subscription lasts
+    PRIMARY KEY(plan_id)
+);
+
+-- 11. Chatbot Logs Table
+CREATE TABLE user_subscriptions (
+    subscription_id INT NOT NULL IDENTITY(1,1),
+    user_id INT,
+    plan_id INT,
+    start_date DATETIME,
+    end_date DATETIME,
+    PRIMARY KEY(subscription_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (plan_id) REFERENCES subscription_plans(plan_id) ON DELETE CASCADE
+);

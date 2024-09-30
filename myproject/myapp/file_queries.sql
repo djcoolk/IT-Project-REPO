@@ -10,23 +10,19 @@ INSERT INTO roles (description, role_name, permissions) VALUES
 GO
 
 -- Insert users into the users table
--- Adding 3 general users for variety
 INSERT INTO users (role_id, username, email, password_hash, full_name, profile_picture, bio, location, last_login, is_verified) VALUES
 (1, 'user1', 'user1@example.com', 'password_hash_1', 'User One', 'profile_pic_1.jpg', 'This is user one bio.', 'Location One', GETDATE(), 1),
 (1, 'user2', 'user2@example.com', 'password_hash_2', 'User Two', 'profile_pic_2.jpg', 'This is user two bio.', 'Location Two', GETDATE(), 0),
 (1, 'user3', 'user3@example.com', 'password_hash_3', 'User Three', 'profile_pic_3.jpg', 'This is user three bio.', 'Location Three', GETDATE(), 1),
--- Adding 5 counsellors
 (2, 'counsellor1', 'counsellor1@example.com', 'password_hash_4', 'Counsellor One', 'profile_pic_4.jpg', 'This is counsellor one bio.', 'Location Four', GETDATE(), 1),
 (2, 'counsellor2', 'counsellor2@example.com', 'password_hash_5', 'Counsellor Two', 'profile_pic_5.jpg', 'This is counsellor two bio.', 'Location Five', GETDATE(), 1),
 (2, 'counsellor3', 'counsellor3@example.com', 'password_hash_6', 'Counsellor Three', 'profile_pic_6.jpg', 'This is counsellor three bio.', 'Location Six', GETDATE(), 1),
 (2, 'counsellor4', 'counsellor4@example.com', 'password_hash_7', 'Counsellor Four', 'profile_pic_7.jpg', 'This is counsellor four bio.', 'Location Seven', GETDATE(), 1),
 (2, 'counsellor5', 'counsellor5@example.com', 'password_hash_8', 'Counsellor Five', 'profile_pic_8.jpg', 'This is counsellor five bio.', 'Location Eight', GETDATE(), 1),
--- Adding admin named Kwaku
 (3, 'kwaku', 'kwaku@example.com', 'password_hash_9', 'Kwaku Admin', 'profile_pic_9.jpg', 'This is Kwaku the admin.', 'Location Nine', GETDATE(), 1);
 GO
 
--- Insert counsellor profiles into the counsellor_profiles table
--- Align user IDs of counsellors to match user table insertion IDs
+-- Insert counsellor profiles
 INSERT INTO counsellor_profiles (user_id, specialization, experience_years, qualification, bio) VALUES
 (4, 'Mental Health', 10, 'PhD in Psychology', 'Counsellor One has extensive experience in mental health counseling.'),
 (5, 'Career Counseling', 8, 'MSc in Career Counseling', 'Counsellor Two specializes in career advice and guidance.'),
@@ -35,7 +31,7 @@ INSERT INTO counsellor_profiles (user_id, specialization, experience_years, qual
 (8, 'Substance Abuse Counseling', 15, 'PhD in Addiction Studies', 'Counsellor Five has extensive experience in substance abuse counseling.');
 GO
 
--- Insert some sample data for other tables as needed
+-- Insert data into sessions, bookings, mood_tracking, and other tables
 INSERT INTO sessions (user_id, start_time, end_time, status) VALUES
 (1, GETDATE(), DATEADD(hour, 1, GETDATE()), 'scheduled'),
 (2, GETDATE(), DATEADD(hour, 1, GETDATE()), 'completed');
@@ -67,4 +63,25 @@ GO
 INSERT INTO chatbot_logs (user_id, input_message, response_message, timestamp) VALUES
 (1, 'Hello, I am feeling stressed.', 'I am here to help you. Can you describe what is causing you stress?', GETDATE()),
 (2, 'How can I book a session?', 'You can book a session through the Bookings page on our platform.', GETDATE());
+GO
+
+-- Insert subscription plans into the subscription_plans table
+INSERT INTO subscription_plans (plan_name, plan_description, price, duration_days) VALUES
+('Basic Plan', 'Access to mood tracking and counsellor booking', 9.99, 30),
+('Premium Plan', 'Includes additional access to counsellor availabilities and notifications', 19.99, 30),
+('Annual Plan', 'All features with a yearly subscription', 199.99, 365);
+GO
+
+-- Insert user subscriptions into the user_subscriptions table
+INSERT INTO user_subscriptions (user_id, plan_id, start_date, end_date) VALUES
+(1, 1, GETDATE(), DATEADD(day, 30, GETDATE())),
+(2, 2, GETDATE(), DATEADD(day, 30, GETDATE())),
+(3, 3, GETDATE(), DATEADD(year, 1, GETDATE()));
+GO
+
+-- Insert payment history into the payment_history table
+INSERT INTO payment_history (user_id, booking_id, amount, payment_date, payment_method) VALUES
+(1, 1, 9.99, GETDATE(), 'Credit Card'),
+(2, 2, 19.99, GETDATE(), 'PayPal'),
+(3, NULL, 199.99, GETDATE(), 'Bank Transfer');
 GO

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Wellness Whisper ADMISTRATOR{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/src/themes/admin_theme.css' %}" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    {% include 'admin_navbar.html' %}
+
+    <!-- Main Content -->
+    <div class="main-content">{% block content %} {% endblock %}</div>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2024 Wellness Whisper. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

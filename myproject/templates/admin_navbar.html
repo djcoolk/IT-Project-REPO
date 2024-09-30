@@ -42,24 +42,24 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <!-- Clickable title -->
-            <a class="navbar-brand" href="home">Wellness Whisper</a>
+            <a class="navbar-brand" href="">Wellness Whisper</a>
 
             <!-- Right-aligned items -->
             <ul class="navbar-nav ms-auto">
                 <!-- Add more navigation items here if needed -->
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    <a class="nav-link" href="{% url 'admin_edit_table' %}">Update Tables</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'professionals' %}">Proffesionals</a>
+                    <a class="nav-link" href="{% url 'admin_view_tables' %}">View Table</a>
                 </li>
               <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    <a class="nav-link" href="{% url 'admin_home' %}">Dashboard</a>
                 </li>
 
                 <!-- Clickable profile icon -->
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'userDetails' %}">
+                    <a class="nav-link" href="#">
                         <div class="profile-icon">A</div>
                     </a>
                 </li>

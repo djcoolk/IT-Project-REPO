@@ -2,7 +2,8 @@
 <div class="container">
   <div class="container">
     <h2 id="form-title">Login</h2>
-    <form id="auth-form">
+    <form id="auth-form" method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
       <input type="text" id="username" placeholder="Username" required />
       <input type="password" id="password" placeholder="Password" required />
       <button type="submit">Login</button>
