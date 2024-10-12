@@ -159,7 +159,7 @@ CREATE TABLE chatbot_logs (
 );
 GO
 
--- 11. Chatbot Logs Table
+-- 12. Payment History Table
 CREATE TABLE payment_history (
     payment_id INT NOT NULL IDENTITY(1,1),
     user_id INT,
@@ -172,7 +172,7 @@ CREATE TABLE payment_history (
     FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
 );
 
--- 11. Chatbot Logs Table
+-- 13. Subcription Plans Table
     CREATE TABLE subscription_plans (
     plan_id INT NOT NULL IDENTITY(1,1),
     plan_name VARCHAR(255),
@@ -182,7 +182,7 @@ CREATE TABLE payment_history (
     PRIMARY KEY(plan_id)
 );
 
--- 11. Chatbot Logs Table
+-- 14. User Subscription Table
 CREATE TABLE user_subscriptions (
     subscription_id INT NOT NULL IDENTITY(1,1),
     user_id INT,
