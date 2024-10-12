@@ -4,41 +4,10 @@
     <h2 id="form-title">Login</h2>
     <form id="auth-form" method="POST" action="{% url 'login' %}">
       {% csrf_token %}
-      <input type="text" id="username" placeholder="Username" required />
-      <input type="password" id="password" placeholder="Password" required />
+      {{ form }}
       <button type="submit">Login</button>
     </form>
-    <span class="toggle-link" id="toggle-form"
-      >Don't have an account? Sign up</span
-    >
+    <a href= "{% url 'register' %}"> Don't have an account? Sign up</a>
   </div>
-
-  <script>
-    const formTitle = document.getElementById("form-title");
-    const authForm = document.getElementById("auth-form");
-    const toggleLink = document.getElementById("toggle-form");
-
-    toggleLink.addEventListener("click", () => {
-      if (formTitle.textContent === "Login") {
-        formTitle.textContent = "Sign Up";
-        authForm.innerHTML = `
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit">Sign Up</button>
-            `;
-        toggleLink.textContent = "Already have an account? Login";
-      } else {
-        formTitle.textContent = "Login";
-        authForm.innerHTML = `
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit">Login</button>
-            `;
-        toggleLink.textContent = "Don't have an account? Sign up";
-      }
-    });
-  </script>
-  >
 </div>
 {% endblock %}
