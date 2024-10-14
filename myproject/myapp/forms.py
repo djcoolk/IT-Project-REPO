@@ -1,13 +1,13 @@
 from django import forms
-from .models import *
+from . import models
 
 class loginForm(forms.Form):
     user_name = forms.CharField(label='username', max_length=50)
     pass_hash = forms.CharField(label='password', widget=forms.PasswordInput, max_length=50)
 
-class UserDetailsForm(forms.ModelForm):
+class SaveUserDetails(forms.ModelForm):
     class Meta:
-        model = user_details
+        model = models.User
         fields = ['full_name', 'email', 'bio', 'location', 'profile_picture']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),

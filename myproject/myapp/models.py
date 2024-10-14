@@ -1,7 +1,9 @@
 from django.db import models
 
 # 1. Roles Table
-class Roles(models.Model):
+class Role(models.Model):
+    class Meta:
+        db_table = 'roles'
     role_id = models.AutoField(primary_key=True)
     description = models.TextField(blank=True, null=True)
     role_name = models.CharField(max_length=255)
@@ -11,9 +13,12 @@ class Roles(models.Model):
         return self.role_name
 
 # 2. Users Table
-class user_details(models.Model):
+class User(models.Model):
+    class Meta:
+        db_table = 'users'
+
     user_id = models.CharField(max_length=10, primary_key=True, serialize=False)
-    role_id = models.ForeignKey('Roles', on_delete=models.SET_NULL, null=True)
+    role = models.ForeignKey('Role', on_delete=models.SET_NULL, null=True)
     username = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     password_hash = models.CharField(max_length=255)
@@ -29,8 +34,10 @@ class user_details(models.Model):
 
 # 3. Sessions Table
 class Session(models.Model):
+    class Meta:
+        db_table = 'sessions'
     session_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('user_details', on_delete=models.CASCADE)
+    user = models.ForeignKey('user', on_delete=models.CASCADE)
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True)
@@ -40,20 +47,24 @@ class Session(models.Model):
 
 # 4. Counsellor Profiles Table
 class CounsellorProfile(models.Model):
+    class Meta:
+        db_table = 'counsellor_profiles'
     counsellor_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('user_details', on_delete=models.CASCADE)
+    user = models.ForeignKey('user', on_delete=models.CASCADE)
     specialization = models.CharField(max_length=255)
     experience_years = models.IntegerField()
     qualification = models.CharField(max_length=255)
     bio = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user_id.full_name} - {self.specialization}"
+        return f"{self.user.full_name} - {self.specialization}"
 
 # 5. Bookings Table
 class Booking(models.Model):
+    class Meta:
+        db_table = 'bookings'
     booking_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('user_details', on_delete=models.CASCADE)
+    user = models.ForeignKey('user', on_delete=models.CASCADE)
     counsellor = models.ForeignKey('CounsellorProfile', on_delete=models.CASCADE)
     session = models.ForeignKey('Session', on_delete=models.SET_NULL, null=True)
     booking_date = models.DateTimeField()
@@ -64,10 +75,13 @@ class Booking(models.Model):
 
 # 6. Chat Logs Table
 class ChatLog(models.Model):
+
+    class Meta:
+        db_table = 'chat_logs'
     chat_id = models.AutoField(primary_key=True)
     session = models.ForeignKey('Session', on_delete=models.CASCADE)
-    sender = models.ForeignKey('user_details', related_name='sent_messages', on_delete=models.CASCADE)
-    receiver = models.ForeignKey('user_details', related_name='received_messages', on_delete=models.CASCADE)
+    sender = models.ForeignKey('user', related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey('user', related_name='received_messages', on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -76,10 +90,13 @@ class ChatLog(models.Model):
 
 # 7. Call Logs Table
 class CallLog(models.Model):
+
+    class Meta:
+        db_table = 'call_logs'
     call_id = models.AutoField(primary_key=True)
     session = models.ForeignKey('Session', on_delete=models.CASCADE)
-    caller = models.ForeignKey('user_details', related_name='caller', on_delete=models.CASCADE)
-    callee = models.ForeignKey('user_details', related_name='callee', on_delete=models.CASCADE)
+    caller = models.ForeignKey('user', related_name='caller', on_delete=models.CASCADE)
+    callee = models.ForeignKey('user', related_name='callee', on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True)
@@ -89,8 +106,10 @@ class CallLog(models.Model):
 
 # 8. Mood Tracking Table
 class MoodTracking(models.Model):
+    class Meta:
+        db_table = 'mood_tracking'
     mood_entry_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('user_details', on_delete=models.CASCADE)
+    user = models.ForeignKey('user', on_delete=models.CASCADE)
     mood = models.IntegerField()
     entry_date = models.DateTimeField(auto_now_add=True)
     comments = models.TextField(blank=True, null=True)
@@ -100,6 +119,8 @@ class MoodTracking(models.Model):
 
 # 9. Counsellor Availability Table
 class CounsellorAvailability(models.Model):
+    class Meta:
+        db_table = 'counsellor_availabilities'
     availability_id = models.AutoField(primary_key=True)
     counsellor = models.ForeignKey('CounsellorProfile', on_delete=models.CASCADE)
     day_of_week = models.CharField(max_length=20)
@@ -107,34 +128,40 @@ class CounsellorAvailability(models.Model):
     end_time = models.TimeField()
 
     def __str__(self):
-        return f"{self.counsellor.user_id.full_name} - {self.day_of_week}"
+        return f"{self.counsellor.user.full_name} - {self.day_of_week}"
 
 # 10. Notifications Table
 class Notification(models.Model):
+    class Meta:
+        db_table = 'notifications'
     notification_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('user_details', on_delete=models.CASCADE)
+    user = models.ForeignKey('user', on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return f"Notification {self.notification_id} for {self.user_id.user_id}"
+        return f"Notification {self.notification_id} for {self.user.user}"
 
 # 11. Chatbot Logs Table
 class ChatbotLog(models.Model):
+    class Meta:
+        db_table = 'chatbot_logs'
     chatbot_log_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('user_details', on_delete=models.CASCADE)
+    user = models.ForeignKey('user', on_delete=models.CASCADE)
     input_message = models.TextField()
     response_message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Chatbot Log {self.chatbot_log_id} for {self.user_id.username}"
+        return f"Chatbot Log {self.chatbot_log_id} for {self.user.username}"
 
 # 12. Payment History Table
 class PaymentHistory(models.Model):
+    class Meta:
+        db_table = 'payment_history'
     payment_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('user_details', on_delete=models.CASCADE)
+    user = models.ForeignKey('user', on_delete=models.CASCADE)
     booking = models.ForeignKey('Booking', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
@@ -145,6 +172,8 @@ class PaymentHistory(models.Model):
 
 # 13. Subscription Plans Table
 class SubscriptionPlan(models.Model):
+    class Meta:
+        db_table = 'subscription_plans'
     plan_id = models.AutoField(primary_key=True)
     plan_name = models.CharField(max_length=255)
     plan_description = models.TextField()
@@ -156,11 +185,13 @@ class SubscriptionPlan(models.Model):
 
 # 14. User Subscriptions Table
 class UserSubscription(models.Model):
+    class Meta:
+        db_table = 'user_subscriptions'
     subscription_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('user_details', on_delete=models.CASCADE)
+    user = models.ForeignKey('user', on_delete=models.CASCADE)
     plan = models.ForeignKey('SubscriptionPlan', on_delete=models.CASCADE)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
 
     def __str__(self):
-        return f"Subscription {self.subscription_id} for {self.user_id.username}"
+        return f"Subscription {self.subscription_id} for {self.user.username}"
