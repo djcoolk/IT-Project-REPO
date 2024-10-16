@@ -1,4 +1,6 @@
-{% extends 'main.html' %} {% block content %}
+{% extends 'main.html' %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,26 +54,26 @@
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="row mb-4 text-center">
             <h1>Meet Our Counsellors</h1>
             <p>Explore their qualifications, specializations, and availability to find the best fit for your needs.</p>
         </div>
 
-        <!-- Dummy Counsellor 1 -->
+        <!-- Loop through Counsellors -->
+        {% for counsellor in counsellors %}
         <div class="row counsellor-card">
             <div class="col-md-4 d-flex justify-content-center align-items-center">
-                <img src="https://via.placeholder.com/120" alt="Dr. Emily Johnson" class="profile-pic">
+                <img src="{{ counsellor.profile_pic }}" alt="{{ counsellor.name }}" class="profile-pic">
             </div>
             <div class="col-md-8">
                 <div class="card-header">
-                    Dr. Emily Johnson
+                    {{ counsellor.name }}
                 </div>
                 <div class="card-body">
-                    <p><strong>Specialization:</strong> Anxiety, Depression, Cognitive Behavioral Therapy (CBT)</p>
-                    <p><strong>Qualification:</strong> PhD in Clinical Psychology, Certified CBT Specialist</p>
-                    <p class="bio-section"><strong>Bio:</strong> Dr. Emily Johnson has over 10 years of experience in clinical psychology, specializing in helping individuals cope with anxiety and depression through evidence-based CBT techniques. She is passionate about promoting mental health and mindfulness practices.</p>
+                    <p><strong>Specialization:</strong> {{ counsellor.specialization }}</p>
+                    <p><strong>Qualification:</strong> {{ counsellor.qualification }}</p>
+                    <p class="bio-section"><strong>Bio:</strong> {{ counsellor.bio }}</p>
 
                     <!-- Availability Table -->
                     <div class="availability-table">
@@ -85,21 +87,13 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for availability in counsellor.availability %}
                                 <tr>
-                                    <td>Monday</td>
-                                    <td>10:00 AM</td>
-                                    <td>2:00 PM</td>
+                                    <td>{{ availability.day }}</td>
+                                    <td>{{ availability.start_time }}</td>
+                                    <td>{{ availability.end_time }}</td>
                                 </tr>
-                                <tr>
-                                    <td>Wednesday</td>
-                                    <td>1:00 PM</td>
-                                    <td>5:00 PM</td>
-                                </tr>
-                                <tr>
-                                    <td>Friday</td>
-                                    <td>9:00 AM</td>
-                                    <td>1:00 PM</td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -107,109 +101,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- Dummy Counsellor 2 -->
-        <div class="row counsellor-card">
-            <div class="col-md-4 d-flex justify-content-center align-items-center">
-                <img src="https://via.placeholder.com/120" alt="Dr. Michael Lee" class="profile-pic">
-            </div>
-            <div class="col-md-8">
-                <div class="card-header">
-                    Dr. Michael Lee
-                </div>
-                <div class="card-body">
-                    <p><strong>Specialization:</strong> Trauma, PTSD, Relationship Counseling</p>
-                    <p><strong>Qualification:</strong> MA in Counseling, Certified Trauma Specialist</p>
-                    <p class="bio-section"><strong>Bio:</strong> Dr. Michael Lee is a dedicated trauma specialist with a focus on helping individuals overcome PTSD and rebuild healthy relationships. He brings a compassionate approach to his work, blending traditional and modern counseling techniques.</p>
-
-                    <!-- Availability Table -->
-                    <div class="availability-table">
-                        <strong>Availability:</strong>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Day</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Tuesday</td>
-                                    <td>9:00 AM</td>
-                                    <td>12:00 PM</td>
-                                </tr>
-                                <tr>
-                                    <td>Thursday</td>
-                                    <td>2:00 PM</td>
-                                    <td>6:00 PM</td>
-                                </tr>
-                                <tr>
-                                    <td>Friday</td>
-                                    <td>11:00 AM</td>
-                                    <td>4:00 PM</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <button class="btn btn-book w-100">Book Session</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dummy Counsellor 3 -->
-        <div class="row counsellor-card">
-            <div class="col-md-4 d-flex justify-content-center align-items-center">
-                <img src="https://via.placeholder.com/120" alt="Dr. Sarah Williams" class="profile-pic">
-            </div>
-            <div class="col-md-8">
-                <div class="card-header">
-                    Dr. Sarah Williams
-                </div>
-                <div class="card-body">
-                    <p><strong>Specialization:</strong> Work Stress, Burnout Prevention, Mindfulness</p>
-                    <p><strong>Qualification:</strong> MS in Psychotherapy, Certified Mindfulness Therapist</p>
-                    <p class="bio-section"><strong>Bio:</strong> Dr. Sarah Williams is an expert in mindfulness and stress management, with a focus on helping professionals manage work-related stress and prevent burnout. Her therapy incorporates mindfulness techniques to promote emotional well-being.</p>
-
-                    <!-- Availability Table -->
-                    <div class="availability-table">
-                        <strong>Availability:</strong>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Day</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Wednesday</td>
-                                    <td>10:00 AM</td>
-                                    <td>3:00 PM</td>
-                                </tr>
-                                <tr>
-                                    <td>Thursday</td>
-                                    <td>12:00 PM</td>
-                                    <td>4:00 PM</td>
-                                </tr>
-                                <tr>
-                                    <td>Saturday</td>
-                                    <td>9:00 AM</td>
-                                    <td>12:00 PM</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <button class="btn btn-book w-100">Book Session</button>
-                </div>
-            </div>
-        </div>
-
+        {% endfor %}
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
 {% endblock %}

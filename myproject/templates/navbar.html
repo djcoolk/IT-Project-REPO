@@ -4,49 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navbar - Wellness Whisper</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .navbar {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .navbar-brand {
-            font-size: 24px;
-            font-weight: bold;
-            color: #5A67D8;
-        }
-        .navbar-nav .nav-link {
-            color: #4A5568;
-        }
-        .navbar-nav .nav-link:hover {
-            color: #2D3748;
-        }
-        .profile-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #4A5568;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-            text-transform: uppercase;
-        }
-        .profile-icon:hover {
-            background-color: #2D3748;
-            cursor: pointer;
-        }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" href= "{% static '/src/themes/style.css' %}"/>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <!-- Clickable title -->
             <a class="navbar-brand" href="{% url 'home' %}">Wellness Whisper</a>
 
-            <!-- Right-aligned items -->
             <ul class="navbar-nav ms-auto">
-                <!-- Add more navigation items here if needed -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'home' %}">Home</a>
                 </li>
@@ -57,7 +23,6 @@
                     <a class="nav-link" href="{% url 'login' %}">Login</a>
                 </li>
 
-                <!-- Clickable profile icon -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'user_details' %}">
                         <div class="profile-icon">A</div>

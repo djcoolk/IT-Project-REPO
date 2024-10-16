@@ -37,7 +37,7 @@ class Session(models.Model):
     class Meta:
         db_table = 'sessions'
     session_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('user', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True)
@@ -50,7 +50,7 @@ class CounsellorProfile(models.Model):
     class Meta:
         db_table = 'counsellor_profiles'
     counsellor_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('user', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     specialization = models.CharField(max_length=255)
     experience_years = models.IntegerField()
     qualification = models.CharField(max_length=255)
@@ -64,7 +64,7 @@ class Booking(models.Model):
     class Meta:
         db_table = 'bookings'
     booking_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('user', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     counsellor = models.ForeignKey('CounsellorProfile', on_delete=models.CASCADE)
     session = models.ForeignKey('Session', on_delete=models.SET_NULL, null=True)
     booking_date = models.DateTimeField()
@@ -80,8 +80,8 @@ class ChatLog(models.Model):
         db_table = 'chat_logs'
     chat_id = models.AutoField(primary_key=True)
     session = models.ForeignKey('Session', on_delete=models.CASCADE)
-    sender = models.ForeignKey('user', related_name='sent_messages', on_delete=models.CASCADE)
-    receiver = models.ForeignKey('user', related_name='received_messages', on_delete=models.CASCADE)
+    sender = models.ForeignKey('User', related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey('User', related_name='received_messages', on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -95,8 +95,8 @@ class CallLog(models.Model):
         db_table = 'call_logs'
     call_id = models.AutoField(primary_key=True)
     session = models.ForeignKey('Session', on_delete=models.CASCADE)
-    caller = models.ForeignKey('user', related_name='caller', on_delete=models.CASCADE)
-    callee = models.ForeignKey('user', related_name='callee', on_delete=models.CASCADE)
+    caller = models.ForeignKey('User', related_name='caller', on_delete=models.CASCADE)
+    callee = models.ForeignKey('User', related_name='callee', on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True)
@@ -109,7 +109,7 @@ class MoodTracking(models.Model):
     class Meta:
         db_table = 'mood_tracking'
     mood_entry_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('user', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     mood = models.IntegerField()
     entry_date = models.DateTimeField(auto_now_add=True)
     comments = models.TextField(blank=True, null=True)
@@ -135,20 +135,20 @@ class Notification(models.Model):
     class Meta:
         db_table = 'notifications'
     notification_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('user', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return f"Notification {self.notification_id} for {self.user.user}"
+        return f"Notification {self.notification_id} for {self.user}"
 
 # 11. Chatbot Logs Table
 class ChatbotLog(models.Model):
     class Meta:
         db_table = 'chatbot_logs'
     chatbot_log_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('user', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     input_message = models.TextField()
     response_message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -161,7 +161,7 @@ class PaymentHistory(models.Model):
     class Meta:
         db_table = 'payment_history'
     payment_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('user', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     booking = models.ForeignKey('Booking', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
@@ -188,7 +188,7 @@ class UserSubscription(models.Model):
     class Meta:
         db_table = 'user_subscriptions'
     subscription_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('user', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     plan = models.ForeignKey('SubscriptionPlan', on_delete=models.CASCADE)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()

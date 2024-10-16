@@ -1,11 +1,10 @@
 {% extends 'main.html' %} {% block content %}
-{% csrf_token %}
+
   <div class="container">
     <h2 id="form-title">Register</h2>
     <form id="auth-form" method="POST" action="{% url 'register' %}">
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password" required>
+        {% csrf_token %}
+        {{ form }}
         <button type="submit">Sign Up</button>
     </form>
     <a href= "{% url 'login' %}"> Already have an account? Login here.</a>
