@@ -23,8 +23,8 @@ let joinAndDisplayLocalStream = async () => {
                       </div>`;
         document.getElementById('video-streams').insertAdjacentHTML('beforeend', player);
         localTracks[1].play(`user-${UID}`);
-        console.log("Camera is playing: user-", UID);
-        
+        console.log(`Playing local video in element: user-${UID}`);
+
         await client.publish([localTracks[0], localTracks[1]]);
         console.log("Published local tracks");
     } catch (error) {
@@ -52,7 +52,8 @@ let handleUserJoined = async (user, mediaType) => {
                       <div class="video-player" id="user-${user.uid}"></div>
                   </div>`;
         document.getElementById('video-streams').insertAdjacentHTML('beforeend', player);
-        user.videoTrack.play(`user-${user.uid}`);
+       user.videoTrack.play(`user-${user.uid}`);
+        console.log(`Playing remote user video in element: user-${user.uid}`);
     }
 
     if (mediaType === 'audio') {
