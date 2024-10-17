@@ -13,12 +13,16 @@ class registerForm(forms.Form):
 class SaveUserDetails(forms.ModelForm):
     class Meta:
         model = models.User
-        fields = ['full_name', 'email', 'bio', 'location', 'profile_picture']
+        fields = ['full_name', 'email', 'bio', 'location', 'profile_picture', 'is_verified']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Enter your bio...'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your location...'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email...'}),
             'full_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your full name...'}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
+            'user_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'role_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_login': forms.TextInput(attrs={'class': 'form-control'}),
+            'is_verified': forms.CheckboxInput(attrs={'class': 'form-control'}),
         }
 # class createBookingForm(forms.ModelForm):

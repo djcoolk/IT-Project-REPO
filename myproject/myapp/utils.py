@@ -18,7 +18,7 @@ class User:
 
     def login(username, password):
         password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest() ## hash password using sha256 for security
-        #password_hash = password ## for testing
+        #password_hash = password # for testing only
 
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM users WHERE username=%s AND password_hash=%s", [username, password_hash])

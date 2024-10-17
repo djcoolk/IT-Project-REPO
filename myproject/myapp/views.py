@@ -1,3 +1,4 @@
+from dataclasses import fields
 from lib2to3.fixes.fix_input import context
 
 from django.shortcuts import render, redirect
@@ -23,14 +24,14 @@ def login(request): # User enters username and password and is validated and log
             if User.login(username, password) is not None:
                 logged_in_user = User.login(username, password)
                 context['logged_in_user'] = logged_in_user
-                return render(request, 'myapp/home.html',context)
+                return render(request, 'home.html', context)
             else:
-                return render(request, 'myapp/login.html',context)
+                return render(request, 'login.html', context)
         else:
-            return render(request, 'myapp/login.html', context)
+            return render(request, 'login.html', context)
 
     else:
-        return render(request, 'myapp/login.html',context)
+        return render(request, 'login.html', context)
 
 def register(request): # user will create a new account if they dont have one
 
@@ -44,43 +45,47 @@ def register(request): # user will create a new account if they dont have one
             username = request.POST.get('username')
             email = request.POST.get('email')
             password = request.POST.get('password')
-            User.register(email,username, password)
-            return render(request, 'myapp/home.html',context)
+            logged_in_user = User.register(email,username, password)
+            return render(request, 'home.html', context)
         else:
-            return render(request, 'myapp/register.html', context)
+            return render(request, 'register.html', context)
     else:
-        return render(request, 'myapp/register.html', context)
+        return render(request, 'register.html', context)
 
-def user_details(request): # process data from the user and save to database
+def user_details(request): # display user details also process data from the user and save to database
 
     form = SaveUserDetails()
-    context ={}
-    context['form'] = form
 
-    return render(request, 'myapp/user_details.html', context)
+    context = {}
+    context['form'] = form
+    context['logged_in_user'] = logged_in_user
+
+    return render(request, 'user_details.html', context)
 
 def home(request):
+
     context = {}
+
     if logged_in_user is not None:
         context['logged_in_user'] = logged_in_user
-    return render(request, 'myapp/home.html', context)
+    return render(request, 'home.html', context)
 
 def professionals(request):
-    return render(request, 'myapp/professionals.html')
+    return render(request, 'professionals.html')
 
 def admin_home(request):
-    return render(request, 'myapp/admin_home.html')
+    return render(request, 'admin_home.html')
 
 def admin_view_tables(request):
-    return render(request, 'myapp/admin_view_tables.html')
+    return render(request, 'admin_view_tables.html')
 
 def admin_edit_table(request):
-    return render(request, 'myapp/admin_edit_table.html')
+    return render(request, 'admin_edit_table.html')
 
 def chatbot(request):
-    return render(request, 'myapp/chatbot.html')
+    return render(request, 'chatbot.html')
 
 def view_bookings(request):
-    return render(request, 'myapp/view_bookings.html')
+    return render(request, 'view_bookings.html')
 
 

@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Wellness Whisper{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static '/src/themes/style.css' %}" />
+    <link rel="stylesheet" href="{% static '/bootstrap-5.3.3-dist/css/bootstrap.min.css' %}" />
   </head>
   <body>
     {% include 'navbar.html' %}
 
-    <div class="main-content">{% block content %} {% endblock %}</div>
+    <div class="main-content">
+        {% block content %}
+
+
+        {% endblock %}
+    </div>
 
     <footer>
       <p>&copy; 2024 Wellness Whisper. All rights reserved.</p>
