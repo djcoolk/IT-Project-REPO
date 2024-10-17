@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 from .utils import *
+
 # global variables
 logged_in_user = None
 def login(request): # User enters username and password and is validated and logged in
@@ -33,6 +34,8 @@ def login(request): # User enters username and password and is validated and log
     else:
         return render(request, 'login.html', context)
 
+def video_call(request):
+    return render(request, 'index.html')
 def register(request): # user will create a new account if they dont have one
 
     context = {}
