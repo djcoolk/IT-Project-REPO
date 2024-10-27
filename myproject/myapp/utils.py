@@ -1,7 +1,7 @@
 import hashlib
 from django.db import connection
 
-class User:
+class User_object:
     # Order of attributes has to match order of fields in DB in order for unpack operator to work properly
     def __init__(self,id, role, username, email, password_hash, full_name,profile_picture, bio,  location, last_login, isVerified):
         self.id = id
@@ -16,7 +16,7 @@ class User:
         self.last_login = last_login
         self.isVerified = isVerified
 
-    def login(username, password):
+    def get_user_object(username, password):
         password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest() ## hash password using sha256 for security
         #password_hash = password # for testing only
 
@@ -26,7 +26,7 @@ class User:
         if user_details is None:
             return None
         else:
-            return User(*user_details)  # unpack operator "*" will populate attributes for user object.
+            return User_object(*user_details)  # unpack operator "*" will populate attributes for user object.
 
     def register(email, username, password):
         password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest() ## hash password using sha256 for security

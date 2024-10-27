@@ -1,8 +1,9 @@
 {% extends 'main.html' %}
 {% block content %}
   <h2>Edit Profile</h2>
-    <div class="container">
-        {{ form }}
-        <button type="submit">Save</button>
-    </div>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit">Submit</button>
+</form>
 {% endblock %}
