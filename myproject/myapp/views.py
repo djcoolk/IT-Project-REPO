@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, authenticate, logout, get_user_model
 from django.contrib.auth.decorators import login_required
-from django.template.context_processors import request
 from django.contrib import messages
 from .forms import loginForm, SaveUserDetails, registerForm
 
@@ -40,9 +39,21 @@ def register(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            user = User.objects.create_user(email=email, password=password)
-            auth_login(request,user)  # Log the user in after registration
-            return redirect('home')  # Redirect to home after successful registration
+            role = form.cleaned_data['role']
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already registered.')
+                return redirect('register')
+            else:
+                user = User.objects.create_user(email=email, password=password)
+                auth_login(request, user) # Log the user in after registration
+                if role == False: # Check if user is therapist
+                    default_role = role.objects.get(id=1)
+                    user.role = default_role
+                else:
+                    therapist_role = role.objects.get(id=2) #assign therapist role
+                    user.role = therapist_role
+                messages.success(request, 'Registration successful.')
+                return redirect('home')  # Redirect to home after successful registration
     else:
         form = registerForm()
     return render(request, 'register.html', {'form': form})

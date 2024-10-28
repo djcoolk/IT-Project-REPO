@@ -11,6 +11,7 @@ class loginForm(forms.Form):
 class registerForm(forms.Form):
     email = forms.EmailField(label='Email', max_length=50)
     password = forms.CharField(label='Password', widget=forms.PasswordInput, max_length=50)
+    role = forms.BooleanField(label='Please check if you are registering as a therapist', required=False, initial=False)
 
 class SaveUserDetails(forms.ModelForm):
     class Meta:
