@@ -1,13 +1,188 @@
-{% extends 'main.html' %} {% block content %}
-<div class="container">
-  <div class="container">
-    <h2 id="form-title">Login</h2>
-    <form method="POST" action="{% url 'login' %}">
-      {% csrf_token %}
-      {{ form }}
-      <button type="submit">Login</button>
-    </form>
-    <a href= "{% url 'register' %}"> Don't have an account? Sign up</a>
-  </div>
-</div>
-{% endblock %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Whisper</title>
+    <style>
+        /* Global Styling */
+        body, html {
+            margin: 100;
+            padding: 100;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url("{% static 'image/imgback.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            color: #000080;
+        }
+
+        /* Centered Login Container */
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            width: 60px;
+            height: auto;
+            margin-right: 10px;
+        }
+        .logo-name {
+            font-family: Georgia, serif;
+            font-size: 28px;
+            font-weight: bold;
+            color: #004080;
+        }
+
+        /* Login Form Header */
+        .login-form .h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #004080;
+        }
+
+        /* Input Styles */
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #add8e6;
+            border-radius: 6px;
+            background-color: #f0f8ff;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #00bfff;
+            background-color: #e6f7ff;
+            outline: none;
+        }
+
+        /* Button Styling */
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #87ceeb;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            background-color: #00bfff;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Forgot Password Link */
+        #forgot-password {
+            color: #004080;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        #forgot-password:hover {
+            color: #00bfff;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 20px;
+                max-width: 90%;
+            }
+            .logo-name, .login-form .h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Form -->
+    <div class="login-container">
+        <div class="logo">
+            <img src="{% static 'image/logo.png' %}" alt="Wellness Whisper Logo"><!-- Update this path -->
+            <span class="logo-name">Wellness Whisper</span>
+        </div>
+        <div class="login-form">
+            <div class="h1">Log In</div>
+            <input type="text" id="username" placeholder="Email or Phone number" aria-label="Username" required>
+            <input type="password" id="password" placeholder="Password" aria-label="Password" required>
+            <button type="button" id="loginButton" onclick="login()">Sign In</button>
+            <div id="errorMessage" style="display: none; color: red; margin-top: 10px;"></div>
+            <div style="margin-top: 20px;">
+              <a href="{% url 'register' %}" style="text-decoration: none;">
+                <button style="background-color: #004080; color: #fff;">Sign Up</button>
+              </a>
+            </div>
+
+        </div>
+        <div class="form-group" id="forgot-password-group">
+            <a id="forgot-password" href="/login/?action=forgot">Forgot password?</a>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const errorMessage = document.getElementById("errorMessage");
+            const button = document.getElementById("loginButton");
+
+            // Reset error message
+            errorMessage.style.display = "none";
+
+            // Basic form validation
+            if (!username || !password) {
+                errorMessage.style.display = "block";
+                errorMessage.textContent = "Please fill in all fields.";
+                return;
+            }
+
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = "Signing In...";
+
+            // Simulate a login delay
+            setTimeout(() => {
+                // Example login failure message
+                errorMessage.style.display = "block";
+                errorMessage.textContent = "Incorrect username or password.";
+
+                // Reset button
+                button.disabled = false;
+                button.innerHTML = "Sign In";
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>
+

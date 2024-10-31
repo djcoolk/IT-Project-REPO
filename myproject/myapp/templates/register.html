@@ -1,12 +1,180 @@
-{% extends 'main.html' %} {% block content %}
+{% load static %}
 
-  <div class="container">
-    <h2 id="form-title">Register</h2>
-    <form id="auth-form" method="POST" action="{% url 'register' %}">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Sign Up</button>
-    </form>
-    <a href= "{% url 'login' %}"> Already have an account? Login here.</a>
-  </div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Wellness Whisper</title>
+    <style>
+        /* Global Styling */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url("{% static 'image/back_img.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            color: #000080;
+        }
+
+        /* Centered Signup Container */
+        .signup-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 60px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .logo-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #004080;
+        }
+
+        /* Signup Form Header */
+        .signup-form .h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #004080;
+        }
+
+        /* Input Styles */
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #add8e6;
+            border-radius: 6px;
+            background-color: #f0f8ff;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #00bfff;
+            background-color: #e6f7ff;
+            outline: none;
+        }
+
+        /* Button Styling */
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #87ceeb;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            background-color: #00bfff;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Link Back to Login */
+        .login-link {
+            margin-top: 15px;
+            display: block;
+            color: #004080;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+            color: #00bfff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Signup Form -->
+    <div class="signup-container">
+        <div class="logo">
+            <img src="{% static 'image/logo.png' %}" alt="Wellness Whisper Logo">
+            <span class="logo-name">Wellness Whisper</span>
+        </div>
+        <div class="signup-form">
+            <div class="h1">Sign Up</div>
+            <input type="text" id="username" placeholder="Unique Username" aria-label="Username" required>
+            <input type="email" id="email" placeholder="Email" aria-label="Email" required>
+            <input type="password" id="password" placeholder="Password" aria-label="Password" required>
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" aria-label="Confirm Password" required>
+            <button type="button" id="signupButton" onclick="signup()">Sign Up</button>
+            <div id="errorMessage" style="display: none; color: red; margin-top: 10px;"></div>
+        </div>
+        <a class="login-link" href="{% url 'login' %}">Already have an account? Log in here.</a>
+    </div>
+
+    <script>
+        function signup() {
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const errorMessage = document.getElementById("errorMessage");
+            const button = document.getElementById("signupButton");
+
+            // Reset error message
+            errorMessage.style.display = "none";
+
+            // Basic form validation
+            if (!username || !email || !password || !confirmPassword) {
+                errorMessage.style.display = "block";
+                errorMessage.textContent = "Please fill in all fields.";
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = "block";
+                errorMessage.textContent = "Passwords do not match.";
+                return;
+            }
+
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = "Signing Up...";
+
+            // Simulate a signup delay
+            setTimeout(() => {
+                // Example signup success message
+                alert("Sign up successful! Redirecting to login page...");
+                // Redirect to login page
+                window.location.href = "login.html";
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>
