@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login as auth_login, authenticate, logout, get_user_model
+from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import loginForm, SaveUserDetails, registerForm
+from .models import *
+from .forms import *
 
 User = get_user_model()
 
@@ -39,19 +40,21 @@ def register(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            role = form.cleaned_data['role']
-            if User.objects.filter(email=email).exists():
+            is_therapist = form.cleaned_data['role']
+            if User.objects.filter(email=email).exists(): #check if email has been registered
                 messages.error(request, 'Email already registered.')
                 return redirect('register')
             else:
                 user = User.objects.create_user(email=email, password=password)
-                auth_login(request, user) # Log the user in after registration
-                if role == False: # Check if user is therapist
-                    default_role = role.objects.get(id=1)
-                    user.role = default_role
-                else:
-                    therapist_role = role.objects.get(id=2) #assign therapist role
+                if is_therapist: # Check if user is therapist
+                    therapist_role = Role.objects.get(role_id=2) #assign therapist role
                     user.role = therapist_role
+                    CounsellorProfile.objects.create(user=user)
+                else:
+                    default_role = Role.objects.get(role_id=1)
+                    user.role = default_role
+                user.save()
+                auth_login(request, user) # Log the user in after registration
                 messages.success(request, 'Registration successful.')
                 return redirect('home')  # Redirect to home after successful registration
     else:

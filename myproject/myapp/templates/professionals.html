@@ -65,16 +65,20 @@
         {% for counsellor in counsellors %}
         <div class="row counsellor-card">
             <div class="col-md-4 d-flex justify-content-center align-items-center">
-                <img src="{{ counsellor.profile_pic }}" alt="{{ counsellor.name }}" class="profile-pic">
+                {% if counsellor.profile_picture %}
+                    <img src="{{ counsellor.profile_picture.url }}" class="rounded-circle" style="width:300px; height: 300px">
+                {% else %}
+                    <img src="{% static 'images/default-profile.png'  %}" class="rounded-circle" style="width:300px; height: 300px">
+                {% endif %}
             </div>
             <div class="col-md-8">
                 <div class="card-header">
-                    {{ counsellor.name }}
+                    {{ counsellor.first_name }}
                 </div>
                 <div class="card-body">
-                    <p><strong>Specialization:</strong> {{ counsellor.specialization }}</p>
-                    <p><strong>Qualification:</strong> {{ counsellor.qualification }}</p>
-                    <p class="bio-section"><strong>Bio:</strong> {{ counsellor.bio }}</p>
+                    <p><strong>Specialization:</strong> {{ counsellor_details.specialization }}</p>
+                    <p><strong>Qualification:</strong> {{ counsellor_details.qualification }}</p>
+                    <p class="bio-section"><strong>Bio:</strong> {{ counsellor_details.bio }}</p>
 
                     <!-- Availability Table -->
                     <div class="availability-table">
