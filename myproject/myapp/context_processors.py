@@ -4,7 +4,7 @@ def user_context(request):
 
     user = request.user
     counsellors = User.objects.filter(role_id=2)
-    counsellor_details = CounsellorProfile.objects.filter(user=user)
+    counsellor_details = CounsellorProfile.objects
 
     return {
         'user': user,
