@@ -29,11 +29,12 @@ const questions = [
     }
 ];
 
-// Restart Quiz
-restart.addEventListener("click", () => {
-    initial();
-    displayContainer.classList.remove("hide");
-    scoreContainer.classList.add("hide");
+/// Done Button - takes user to the home screen
+doneButton.addEventListener("click", () => {
+    // Redirect to the home screen (replace 'home.html' with your actual home page URL)
+    window.location.href = 'homescreen.html';
+});
+
 });
 
 // Next Button

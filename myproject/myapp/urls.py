@@ -1,11 +1,13 @@
 from django.urls import path
 from . import views
+from .views import moodquiz, submit_mood_entry
 
 urlpatterns = [
     path('', views.home, name='home'),
     path('home/', views.home, name='home'),
     path('homescreen/', views.homescreen, name='homescreen'),
     path('moodquiz/', views.moodquiz, name='moodquiz'),
+    path('submit_mood_entry/', submit_mood_entry, name='submit_mood_entry'),
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
     path('professionals/', views.professionals, name='professionals'),

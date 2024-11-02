@@ -5,6 +5,12 @@ from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 from .utils import *
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import MoodTracking
+
 
 # global variables
 logged_in_user = None
@@ -25,7 +31,7 @@ def login(request): # User enters username and password and is validated and log
             if User.login(username, password) is not None:
                 logged_in_user = User.login(username, password)
                 context['logged_in_user'] = logged_in_user
-                return render(request, 'home.html', context)
+                return render(request, 'homescreen.html', context)
             else:
                 return render(request, 'login.html', context)
         else:
@@ -49,7 +55,7 @@ def register(request): # user will create a new account if they dont have one
             email = request.POST.get('email')
             password = request.POST.get('password')
             logged_in_user = User.register(email,username, password)
-            return render(request, 'home.html', context)
+            return render(request, 'homescreen.html', context)
         else:
             return render(request, 'register.html', context)
     else:
@@ -96,3 +102,23 @@ def homescreen(request):
 
 def moodquiz(request):
     return render(request, 'moodquiz.html')
+def submit_mood_entry(request):
+    if request.method == 'POST':
+        try:
+            # Load the JSON data from the request body
+            data = json.loads(request.body)
+            mood = data.get('mood')
+            comments = data.get('comments')
+
+            # Assuming you have access to the user
+            mood_entry = MoodTracking(
+                user=request.user,  # Ensure you're using the logged-in user
+                mood=mood,
+                comments=comments
+            )
+            mood_entry.save()
+
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)

@@ -1,135 +1,81 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progress Checking</title>
-
+    <title>Progress Tracking</title>
     <style>
         * {
             padding: 0;
             margin: 0;
             box-sizing: border-box;
-            font-family: "Poppins", sans-serif;
+            font-family: "Georgia", serif;
+            color: navy ;
         }
         body {
             height: 100vh;
-            background: linear-gradient(184deg, #8754ff, #8E2DE2);
-        }
-        .start-screen,
-        .score-container {
-            position: absolute;
-            top: 0;
-            width: 100%;
-            height: 100%;
+            background: linear-gradient(135deg, #FFD194, #70E1F5);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        button {
-            border: none;
-            outline: none;
-            cursor: pointer;
-        }
-        #start-button,
-        #restart {
-            font-size: 1.3em;
-            padding: 0.5em 1.8em;
-            border-radius: 0.2em;
-            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.4);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        #start-button:hover,
-        #restart:hover {
-            box-shadow: 0 25px 35px rgba(0, 0, 0, 0.5);
-            background-color: #6b3fe3;
-        }
-        #restart {
-            margin-top: 0.9em;
-        }
-        #display-container {
+        #container {
             background-color: #ffffff;
-            padding: 3.1em 1.8em;
-            width: 80%;
-            max-width: 37.5em;
-            margin: 0 auto;
-            position: absolute;
-            transform: translate(-50%, -50%);
-            top: 50%;
-            left: 50%;
-            border-radius: 0.6em;
+            padding: 2em;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center; /* Center align content */
         }
-        .header {
-            margin-bottom: 1.8em;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 0.6em;
-            border-bottom: 0.1em solid #c0bfd2;
+        img {
+            width: 80px;
+            height: auto;
+            margin-right: 10px;
+            margin-bottom: 1em; /* Space between logo and title */
         }
-        .timer-div {
-            background-color: #e1f5fe;
-            width: 7.5em;
-            border-radius: 1.8em;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.7em 1.8em;
+        h1 {
+            margin-bottom: 1em;
+            color: #333;
         }
         .question {
-            margin-bottom: 1.25em;
-            font-weight: 600;
+            margin: 1.5em 0;
+            text-align: left; /* Align questions to the left */
         }
-        .option-div {
-            font-size: 0.9em;
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        input[type="number"],
+        input[type="text"] {
             width: 100%;
-            padding: 1em;
-            margin: 0.3em 0;
-            text-align: left;
-            outline: none;
-            background: transparent;
+            padding: 0.5em;
             border: 1px solid #c0bfd2;
-            border-radius: 0.3em;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-        .option-div:disabled {
-            color: #000000;
-            cursor: not-allowed;
-        }
-        #next-button {
+            border-radius: 5px;
             font-size: 1em;
-            margin-top: 1.5em;
+        }
+        input[type="number"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #8754ff;
+        }
+        button {
+            width: 100%;
+            padding: 0.7em;
+            border: none;
+            border-radius: 5px;
             background-color: #8754ff;
             color: #ffffff;
-            padding: 0.7em 1.8em;
-            border-radius: 0.3em;
-            float: right;
-            box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 1em;
+            transition: background-color 0.3s ease;
         }
-        #next-button:hover {
+        button:hover {
             background-color: #6b3fe3;
-            box-shadow: 0px 25px 45px rgba(0, 0, 0, 0.4);
-        }
-        .hide {
-            display: none;
-        }
-        .incorrect {
-            background-color: #bbdefb;
-            color: #d32f2f;
-            border-color: #d32f2f;
-        }
-        .correct {
-            background-color: #e7f6d5;
-            color: #689f38;
-            border-color: #689f38;
-        }
-        #user-score {
-            font-size: 1.5em;
-            color: #ffffff;
         }
         /* Home Button */
         .home-button {
@@ -146,111 +92,69 @@
         .home-button:hover {
             color: #ffcc00; /* Color change on hover */
         }
-
-        /* Comment Section */
-        .comment-section {
-            margin-top: 2em;
-            padding: 1em;
-            border: 1px solid #c0bfd2;
-            border-radius: 0.5em;
-            background-color: #f9f9f9;
-        }
-        .comment-input {
-            width: 100%;
-            height: 80px;
-            padding: 10px;
-            border: 1px solid #c0bfd2;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            resize: none;
-        }
-        .comment-submit {
-            background-color: #8754ff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .comment-submit:hover {
-            background-color: #6b3fe3;
-        }
-        /* Popup message */
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            display: none; /* Initially hidden */
-            z-index: 10;
-        }
-        .popup.active {
-            display: block; /* Show when active */
-        }
     </style>
 </head>
 <body>
-    <button class="home-button" onclick="goHome()"><i class="fas fa-home"></i></button>
-    <div class="start-screen">
-        <button id="start-button">Start</button>
-    </div>
-    <div id="display-container">
-        <div class="header">
-            <div class="number-of-count">
-                <span class="number-of-question">Question 1 of 3</span>
-            </div>
-            <div class="timer-div">
-                <img src="{% static 'images/timer.jpg' %}" width="20px" />
-                <span class="time-left">10s</span>
-            </div>
-        </div>
-        <div id="container">
-            <!-- Slider questions will be displayed here -->
-            <div class="question" id="question-container">
-                <p id="question-text">How are you feeling today?</p>
-                <input type="range" min="1" max="5" value="3" class="slider" id="feeling-slider">
-                <div class="emoji-labels">
-                    <span>😞</span>
-                    <span>😐</span>
-                    <span>😊</span>
-                    <span>😁</span>
-                    <span>🎉</span>
-                </div>
-            </div>
-        </div>
-        <button id="next-button">Next</button>
+<button class="home-button" onclick="goHome()">🏠</button>
+<div id="container">
+        <img src="{% static 'image/logo.png' %}" alt="Wellness Whisper Logo"> <!-- Update with your logo path -->
+        <h1>Wellness Whisper</h1> <!-- Title -->
 
-        <!-- Comment Section -->
-        <div class="comment-section">
-            <h3>Leave a Comment</h3>
-            <textarea class="comment-input" id="comment-input" placeholder="Write your comment..."></textarea>
-            <button class="comment-submit" id="comment-submit">Submit</button>
-        </div>
+    <div class="question">
+        <label for="mood">How do you feel today? (1 to 5):</label>
+        <input type="number" id="mood" name="mood" min="1" max="5" placeholder="Rate your mood" required>
     </div>
-    <div class="score-container hide">
-        <div id="user-score">Demo Score</div>
-        <button id="restart">Restart</button>
+    <div class="question">
+        <label for="comments">Any comments? How are you feeling compared to yesterday?</label>
+        <textarea id="comments" name="comments" placeholder="Optional comments..."></textarea>
     </div>
-
-    <!-- Popup for comment submission -->
-    <div class="popup" id="popup-message">
-        <p>Comment submitted successfully!</p>
-        <button onclick="closePopup()">Close</button>
-    </div>
-
-    <script src="{% static 'scripts.js' %}"></script> <!-- Correctly linked to your JavaScript file -->
+   <button onclick="submitMoodEntry()">Submit</button>
 
     <script>
-        // Function to handle home button click
         function goHome() {
-            // Redirect to home page (replace 'home.html' with your actual home page)
-            window.location.href = 'home.html';
+           window.location.href = "/homescreen/";
         }
 
-        // Function to handle comment submission
-        document.getElementById('comment-submit').addEventListener('click', function() {
+        async function submitMoodEntry() {
+            const mood = document.getElementById('mood').value;
+            const comments = document.getElementById('comments').value;
+            const csrfToken = '{{ csrf_token }}';  // Get the CSRF token from the template context
+
+            const data = {
+                mood: mood,
+                comments: comments
+            };
+
+            try {
+                const response = await fetch("{% url 'submit_mood_entry' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Mood entry submitted successfully!');
+                    // Optionally redirect or reset fields
+                    document.getElementById('mood').value = '';
+                    document.getElementById('comments').value = '';
+                } else {
+                    alert('Failed to submit mood entry. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting your mood entry.');
+            }
+        }
+        function submitFeedback() {
+            const feelingRating = document.getElementById('feeling-rating').value;
+            const stressLevel = document.getElementById('stress-level').value;
+            const comparisonYesterday = document.getElementById('comparison-yesterday').value;
+
+            alert(`Feedback submitted:\nFeeling Rating: ${feelingRating}\nStress Level: ${stressLevel}\nComparison to Yesterday: ${comparisonYesterday}`);
+        }
+    </script>
+</body>
+</html>
