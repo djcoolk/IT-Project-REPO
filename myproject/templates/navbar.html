@@ -38,6 +38,8 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'chatbot' %}">Chat to our bot</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'video_call' %}">Join a call</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'professionals' %}">Book a session</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'set_availability' %}">Set availability</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'view_bookings' %}">View bookings</a> </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log out</a></li>
                 {% else %}

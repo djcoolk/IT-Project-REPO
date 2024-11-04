@@ -35,8 +35,7 @@ class Role(models.Model):
     def __str__(self):
         return self.role_name
 
-
-# 2. Custom User Table
+# 2. User Table
 class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         db_table = 'myapp_user'
@@ -45,9 +44,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     role = models.ForeignKey('Role', on_delete=models.SET_NULL, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True,default='default.png')
     bio = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
+    login_streak = models.IntegerField(default=0)
     is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -59,8 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def __str__(self):
-        return self.USERNAME_FIELD
-
+        return f"{self.id} - {self.first_name} {self.last_name}"
 
 # 3. Sessions Table
 class Session(models.Model):
@@ -68,27 +67,29 @@ class Session(models.Model):
         db_table = 'sessions'
 
     session_id = models.AutoField(primary_key=True)
+    counsellor = models.ForeignKey('CounsellorProfile', on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
-    start_time = models.DateTimeField(blank=True, null=True)
-    end_time = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(max_length=50, blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    start_time = models.TimeField(blank=True, null=True)
+    end_time = models.TimeField(blank=True, null=True)
+    is_available = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Session {self.session_id} - {self.status}"
+        return f"Session {self.session_id} - {self.is_available}"
 
 # 4. Counsellor Profiles Table
 class CounsellorProfile(models.Model):
     class Meta:
         db_table = 'counsellor_profiles'
     counsellor_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="counsellorprofile")
     specialization = models.CharField(max_length=255)
     experience_years = models.IntegerField(default=0)
     qualification = models.CharField(max_length=255)
     bio = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.specialization}"
+        return f"{self.user.first_name} - {self.specialization}"
 
 # 5. Bookings Table
 class Booking(models.Model):
@@ -96,10 +97,10 @@ class Booking(models.Model):
         db_table = 'bookings'
     booking_id = models.AutoField(primary_key=True)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
-    counsellor = models.ForeignKey('CounsellorProfile', on_delete=models.CASCADE)
+    availability = models.ForeignKey('CounsellorAvailability', on_delete=models.CASCADE)
     session = models.ForeignKey('Session', on_delete=models.SET_NULL, null=True)
-    booking_date = models.DateTimeField()
-    status = models.CharField(max_length=50, blank=True, null=True)
+    date = models.DateTimeField()
+    status = models.CharField(default='confirmed', max_length=50)
 
     def __str__(self):
         return f"Booking {self.booking_id} - {self.status}"
@@ -128,8 +129,9 @@ class CallLog(models.Model):
     session = models.ForeignKey('Session', on_delete=models.CASCADE)
     caller = models.ForeignKey('User', related_name='caller', on_delete=models.CASCADE)
     callee = models.ForeignKey('User', related_name='callee', on_delete=models.CASCADE)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField(blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField(blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -152,14 +154,15 @@ class MoodTracking(models.Model):
 class CounsellorAvailability(models.Model):
     class Meta:
         db_table = 'counsellor_availabilities'
-    availability_id = models.AutoField(primary_key=True)
-    counsellor = models.ForeignKey('CounsellorProfile', on_delete=models.CASCADE)
-    day_of_week = models.CharField(max_length=20)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    availability = models.AutoField(primary_key=True)
+    counsellor = models.ForeignKey(CounsellorProfile, on_delete=models.CASCADE, related_name="availability")
+    date = models.DateField(null=True, blank=True)
+    start_time = models.TimeField(null=True, blank=True)
+    duration = models.DurationField(null=True, blank=True)
+    is_available = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.counsellor.user.username} - {self.day_of_week}"
+        return f"{self.counsellor.user.first_name} - {self.date}"
 
 # 10. Notifications Table
 class Notification(models.Model):

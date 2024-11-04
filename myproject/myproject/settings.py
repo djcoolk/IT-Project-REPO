@@ -15,6 +15,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+TIME_SLOTS = ['08:00', '12:00', '14:00', '17:00']
+SESSION_DURATIONS = [30, 60, 90, 120, 150, 180]
 
 
 # Quick-start development settings - unsuitable for production

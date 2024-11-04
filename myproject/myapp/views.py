@@ -1,65 +1,145 @@
-from django.shortcuts import render, redirect
+from datetime import timezone, timedelta
+from zoneinfo import available_timezones
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.template.context_processors import request
 from .models import *
 from .forms import *
+from .utils import *
+from django.utils import timezone
 
 User = get_user_model()
 
+@login_required(login_url='login')
 def home(request):
     if request.user.is_authenticated:
-        context = {
-            'logged_in_user': request.user,  # Use the logged-in user from the request
-        }
-        return render(request, 'home.html', context)
+        return render(request, 'home.html')
     else:
         return redirect('login')
 
 def login(request):
     if request.method == 'POST':
-        form = loginForm(request.POST)
+        form = login_form(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 auth_login(request, user)  # Log the user in
-                messages.success(request, 'log in succesfull.')
+                streak_counter(user)
+                messages.success(request, 'log in successful.')
                 return redirect('home')  # Redirect to home after successful login
             else:
                 # error message
                 form.add_error(None, 'Invalid username or password')
     else:
-        form = loginForm()
+        form = login_form()
     return render(request, 'login.html', {'form': form})
 
 def register(request):
-    if request.method == 'POST':
-        form = registerForm(request.POST)
-        if form.is_valid():
+    step = request.GET.get('step') or '1' # Default to step 1
+
+    # Step 1: Initial Register Form
+    if step == '1':
+        form = register_form(request.POST or None)
+        if request.method == 'POST' and form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            is_therapist = form.cleaned_data['role']
-            if User.objects.filter(email=email).exists(): #check if email has been registered
-                messages.error(request, 'Email already registered.')
-                return redirect('register')
-            else:
-                user = User.objects.create_user(email=email, password=password)
-                if is_therapist: # Check if user is therapist
-                    therapist_role = Role.objects.get(role_id=2) #assign therapist role
-                    user.role = therapist_role
-                    CounsellorProfile.objects.create(user=user)
-                else:
-                    default_role = Role.objects.get(role_id=1)
-                    user.role = default_role
-                user.save()
-                auth_login(request, user) # Log the user in after registration
-                messages.success(request, 'Registration successful.')
-                return redirect('home')  # Redirect to home after successful registration
-    else:
-        form = registerForm()
-    return render(request, 'register.html', {'form': form})
+            role = form.cleaned_data['role']
+
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "An account with this email already exists.")
+                return redirect('/register?step=1')
+
+            request.session['email'] = email
+            request.session['password'] = password
+            request.session['role'] = 2 if role else 1
+            return redirect('/register?step=2')
+
+    elif step == '2':
+        form = user_details_form(request.POST or None)
+        if request.method == 'POST' and form.is_valid():
+            request.session['first_name'] = form.cleaned_data['first_name']
+            request.session['last_name'] = form.cleaned_data['last_name']
+            return redirect('/register?step=3')
+
+    elif step == '3':
+        form = extra_details_form(request.POST or None, request.FILES or None)
+        if request.method == 'POST' and form.is_valid():
+            request.session['bio'] = form.cleaned_data['bio']
+            request.session['profile_picture'] = request.FILES.get('profile_picture')
+            return redirect('/register?step=4' if request.session.get('role') == 2 else '/register?step=complete')
+
+    elif step == '4':
+        form = register_counsellor_form(request.POST or None)
+        if request.method == 'POST' and form.is_valid():
+            request.session['specialization'] = form.cleaned_data['specialization']
+            request.session['qualification'] = form.cleaned_data['qualification']
+            request.session['experience_years'] = form.cleaned_data['experience_years']
+            request.session['counsellor_bio'] = form.cleaned_data['bio']
+            return redirect('/register?step=5')
+
+    elif step == '5':
+        form = counsellor_availability_form(request.POST or None)
+        if request.method == 'POST' and form.is_valid():
+            request.session['availability'] = {
+                'date': form.cleaned_data['date'].isoformat(),
+                'start_time': form.cleaned_data['start_time'],
+                'duration': str(form.cleaned_data['duration'])
+            }
+            return redirect('/register?step=complete')
+
+    elif step == "complete":
+        try:
+            user = User.objects.create_user(
+                email=request.session['email'],
+                password=request.session['password'],
+                first_name=request.session.get('first_name'),
+                last_name=request.session.get('last_name'),
+                bio=request.session.get('bio'),
+                location=request.session.get('location'),
+                profile_picture=request.session.get('profile_picture'),
+            )
+            user.role = Role.objects.get(role_id=request.session.get('role'))
+            user.save()
+
+            if request.session.get('role') == 2:
+                counsellor_profile = CounsellorProfile.objects.create(
+                    user=user,
+                    specialization=request.session.get('specialization'),
+                    qualification=request.session.get('qualification'),
+                    experience_years=request.session.get('experience_years'),
+                    bio=request.session.get('counsellor_bio')
+                )
+                availability_data = request.session.get('availability')
+                availability_date = datetime.fromisoformat(availability_data['date']).date()
+                start_time = datetime.strptime(availability_data['start_time'], '%H:%M').time()
+                duration_parts = list(map(int, availability_data['duration'].split(':')))
+                duration = timedelta(hours=duration_parts[0], minutes=duration_parts[1], seconds=duration_parts[2])
+                CounsellorAvailability.objects.create(
+                    counsellor=counsellor_profile,
+                    date=availability_date,
+                    start_time=start_time,
+                    duration=duration
+                )
+            auth_login(request, user)
+            streak_counter(user)
+            messages.success(request, "Registration successful!")
+            # Clear session data
+            for key in [
+                'email', 'password', 'first_name', 'last_name', 'bio',
+                'profile_picture', 'specialization', 'qualification',
+                'experience_years', 'counsellor_bio', 'availability', 'role'
+            ]:
+                request.session.pop(key, None)
+            return redirect('home')
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}")
+            return redirect('/register?step=1')
+
+    return render(request, 'register.html', {'form': form, 'step': step})
 
 @login_required
 def logout_view(request):
@@ -91,24 +171,121 @@ def professionals(request):
     return render(request, 'professionals.html')
 
 @login_required
-def admin_home(request):
-    return render(request, 'admin_home.html')
-
-@login_required
-def admin_view_tables(request):
-    return render(request, 'admin_view_tables.html')
-
-@login_required
-def admin_edit_table(request):
-    return render(request, 'admin_edit_table.html')
-
-@login_required
 def chatbot(request):
     return render(request, 'chatbot.html')
 
 @login_required
 def view_bookings(request):
-    return render(request, 'view_bookings.html')
+    bookings = Booking.objects.filter(user=request.user, status='pending').order_by('date')
+
+    if request.method == 'POST':
+        # Handle cancellation if a cancel button is pressed
+        booking_id = request.POST.get('booking_id')
+        if booking_id:
+            booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
+            booking.status = 'canceled'
+            if booking.availability:
+                booking.availability.is_available = True
+                booking.availability.save()
+            booking.save()
+            messages.success(request, 'Booking canceled successfully.')
+            return redirect('view_bookings')
+
+    return render(request, 'view_bookings.html', {'bookings': bookings})
+
+@login_required()
+def rebook(request, counsellor_id):
+    counsellor = get_object_or_404(CounsellorProfile, counsellor_id=counsellor_id)
+    availability = counsellor.availability.filter(is_available=True)  # Get available slots
+
+    if request.method == 'POST':
+        user = request.user
+        session_id = request.POST.get('session_id')
+
+        try:
+            selected_availability = CounsellorAvailability.objects.get(availability=session_id)
+
+            # Create a new booking and set status
+            booking = Booking.objects.create(
+                user=user,
+                availability=selected_availability,
+                booking_date=datetime.today().date(),
+                status="pending"  # Set the status to pending
+            )
+            selected_availability.is_available = False
+            selected_availability.save()
+
+            messages.success(request, "Booking successful!")
+            return redirect('view_bookings')  # Redirect to view bookings
+
+        except CounsellorAvailability.DoesNotExist:
+            messages.error(request, "No available session for this counsellor.")
+            return redirect('professionals')
+
+    return render(request, 'book_session.html', {
+        'counsellor': counsellor,
+        'availability': availability
+    })
+
+@login_required
+def book_session(request, counsellor_id):
+    counsellor = get_object_or_404(CounsellorProfile, counsellor_id=counsellor_id)
+    availability = counsellor.availability.filter(is_available=True)
+    if request.method == 'POST':
+        user = request.user
+        session_id = request.POST.get('session_id')
+        try:
+            selected_availability = CounsellorAvailability.objects.get(availability=session_id)
+
+            # Create booking and mark availability as booked
+            booking = Booking.objects.create(
+                user=user,
+                availability=selected_availability,
+                date=datetime.today().date(),
+                status="pending"
+            )
+            selected_availability.is_available = False
+            selected_availability.save()
+
+            messages.success(request, "Booking successful!")
+        except CounsellorAvailability.DoesNotExist:
+            messages.error(request, "No available session for this counsellor.")
+            return redirect('professionals')
+
+        return render(request, 'book_session.html', {
+            'counsellor': counsellor,
+            'availability': availability
+        })
+
+    return render(request, 'book_session.html', {
+        'counsellor': counsellor,
+        'availability': availability
+    })
+
+@login_required()
+def set_availability(request):
+    if request.method == 'POST':
+        form = counsellor_availability_form(request.POST)
+        if form.is_valid():
+            availability = form.save(commit=False)
+            availability.counsellor = request.user.counsellorprofile
+
+            if CounsellorAvailability.objects.filter(
+                counsellor=availability.counsellor,
+                date=availability.date,
+                start_time=availability.start_time,
+                duration=availability.duration
+            ).exists():
+                messages.error(request, "Availability for this time already exists.")
+            else:
+                availability.save()
+                messages.success(request, "Availability successfully set!")
+            return redirect('set_availability')
+
+    else:
+        form = counsellor_availability_form()
+
+    return render(request, 'set_availability.html', {'form': form})
 
 def homescreen(request):
     return render(request, 'homescreen.html')

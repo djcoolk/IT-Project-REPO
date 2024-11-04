@@ -60,8 +60,6 @@
             <h1>Meet Our Counsellors</h1>
             <p>Explore their qualifications, specializations, and availability to find the best fit for your needs.</p>
         </div>
-
-        <!-- Loop through Counsellors -->
         {% for counsellor in counsellors %}
         <div class="row counsellor-card">
             <div class="col-md-4 d-flex justify-content-center align-items-center">
@@ -76,11 +74,11 @@
                     {{ counsellor.first_name }}
                 </div>
                 <div class="card-body">
-                    <p><strong>Specialization:</strong> {{ counsellor_details.specialization }}</p>
-                    <p><strong>Qualification:</strong> {{ counsellor_details.qualification }}</p>
-                    <p class="bio-section"><strong>Bio:</strong> {{ counsellor_details.bio }}</p>
+                    <p><strong>Specialization:</strong> {{ counsellor.counsellorprofile.specialization }}</p>
+                    <p><strong>Qualification:</strong> {{ counsellor.counsellorprofile.qualification }}</p>
+                    <p><strong>Years of experience:</strong> {{ counsellor.counsellorprofile.experience_years }}</p>
+                    <p class="bio-section"><strong>Bio:</strong> {{ counsellor.counsellorprofile.bio }}</p>
 
-                    <!-- Availability Table -->
                     <div class="availability-table">
                         <strong>Availability:</strong>
                         <table class="table table-striped">
@@ -92,17 +90,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for availability in counsellor.availability %}
+                                {% for availability in counsellor.counsellorprofile.availability.all%}
                                 <tr>
-                                    <td>{{ availability.day }}</td>
+                                    <td>{{ availability.date }}</td>
                                     <td>{{ availability.start_time }}</td>
                                     <td>{{ availability.end_time }}</td>
+                                    <td>{{ availability.counsellor.counsellorprofile.id }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
-                    <button class="btn btn-book w-100">Book Session</button>
+                    <button class="btn btn-book w-100">
+                        <a href="{% url 'book_session' counsellor.id %}" style="color: white;">
+                            Book Session
+                        </a></button>
                 </div>
             </div>
         </div>

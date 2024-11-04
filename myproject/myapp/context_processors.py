@@ -2,12 +2,10 @@ from .models import *
 
 def user_context(request):
 
-    user = request.user
+    user = request.user if request.user.is_authenticated else None
     counsellors = User.objects.filter(role_id=2)
-    counsellor_details = CounsellorProfile.objects
 
     return {
         'user': user,
-        'counsellors': counsellors,
-        'counsellor_details': counsellor_details
+        'counsellors': counsellors
     }

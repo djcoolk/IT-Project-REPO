@@ -1,12 +1,14 @@
-{% extends 'main.html' %} {% block content %}
+{% extends 'main.html' %}
 
-  <div class="container">
+{% block content %}
+<div class="container">
     <h2 id="form-title">Register</h2>
-    <form id="auth-form" method="POST" action="{% url 'register' %}">
+    <h3>Step {{ step }}</h3>
+    <form id="auth-form" method="POST" action="{% url 'register' %}?step={{ step }}">
         {% csrf_token %}
-        {{ form }}
-        <button type="submit">Sign Up</button>
+        {{ form.as_p }}
+        <button type="submit">Next</button>
     </form>
-    <a href= "{% url 'login' %}"> Already have an account? Login here.</a>
-  </div>
+    <a href="{% url 'login' %}">Already have an account? Login here.</a>
+</div>
 {% endblock %}
