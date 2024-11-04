@@ -84,18 +84,25 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Day</th>
+                                    <th>Date</th>
                                     <th>Start Time</th>
-                                    <th>End Time</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for availability in counsellor.counsellorprofile.availability.all%}
                                 <tr>
-                                    <td>{{ availability.date }}</td>
+                                    <td>{{ availability.date|date:"j F Y"}}</td>
                                     <td>{{ availability.start_time }}</td>
-                                    <td>{{ availability.end_time }}</td>
-                                    <td>{{ availability.counsellor.counsellorprofile.id }}</td>
+                                    <td>{{ availability.duration }}</td>
+                                    <td>
+                                        {% if availability.is_available %}
+                                            Available
+                                        {% else %}
+                                            Booked
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

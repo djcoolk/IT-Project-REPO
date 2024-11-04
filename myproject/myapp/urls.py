@@ -7,8 +7,6 @@ from .views import logout_view
 urlpatterns = [
     path('', views.home, name='home'),
     path('home/', views.home, name='home'),
-    path('homescreen/', views.homescreen, name='homescreen'),
-    path('moodquiz/', views.moodquiz, name='moodquiz'),
     path('login/', views.login, name= 'login'),
     path('register/', views.register, name= 'register'),
     path('logout/', logout_view, name='logout'),

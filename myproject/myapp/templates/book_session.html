@@ -1,23 +1,68 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
-<div class="container">
-    <h2>Book a Session with {{ counsellor.user.first_name }} {{ counsellor.user.last_name }}</h2>
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="session" class="form-label">Select an Available Session</label>
-            <select name="session_id" id="session" class="form-control" required>
-                {% for availability in availability.all %}
-                    <option value="{{ availability.availability }}">
-                        {{ availability.date }} {{ availability.start_time }} - {{ availability.end_time }}
-                    </option>
-                {% empty %}
-                    <option disabled>No sessions available</option>
-                {% endfor %}
-            </select>
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <!-- Card Header with Counsellor's Name -->
+        <div class="card-header bg-primary text-white">
+            <h2>Book a Session with {{ counsellor.user.first_name }} {{ counsellor.user.last_name }}</h2>
         </div>
-        <button type="submit" class="btn btn-primary">Book Session</button>
-    </form>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <!-- Counsellor's Profile Section -->
+            <div class="d-flex align-items-start mb-4">
+                <!-- Profile Picture -->
+                <div>
+                    {% if counsellor.profile_picture %}
+                        <img src="{{ counsellor.profile_picture.url }}" alt="{{ counsellor.user.first_name }}'s Profile Picture" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                    {% endif %}
+                </div>
+                <div class="ml-3">
+                    <h5>About {{ counsellor.user.first_name }}</h5>
+                    <p>{{ counsellor.bio|default:"No bio available" }}</p>
+                </div>
+            </div>
+
+            <!-- Combined Specialization and Qualification Card -->
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Extra details</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Specialization:</strong> {{ counsellor.specialization }}</p>
+                    <p><strong>Qualification:</strong> {{ counsellor.qualification }}</p>
+                    <p><strong>Years of experience:</strong> {{ counsellor.experience_years }}</p>
+                </div>
+            </div>
+
+            <!-- Booking Form Card -->
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Select an Available Session</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="session" class="form-label">Select</label>
+                            <select name="session_id" id="session" class="form-control" required>
+                                {% for availability in availability.all %}
+                                    <option value="{{ availability.availability }}">
+                                        {{ availability.date }} {{ availability.start_time }} - {{ availability.end_time }}
+                                    </option>
+                                {% empty %}
+                                    <option disabled>No sessions available</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Book Session</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -2,13 +2,27 @@
 
 {% block content %}
 <div class="container">
-    <h2 id="form-title">Register</h2>
-    <h3>Step {{ step }}</h3>
-    <form id="auth-form" method="POST" action="{% url 'register' %}?step={{ step }}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Next</button>
-    </form>
-    <a href="{% url 'login' %}">Already have an account? Login here.</a>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h2 id="form-title">Register</h2>
+                    <h3>Step {{ step }}</h3>
+                </div>
+                <div class="card-body">
+                    <form id="auth-form" method="POST" action="{% url 'register' %}?step={{ step }}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ form.as_p }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Next</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'login' %}">Already have an account? Login here.</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

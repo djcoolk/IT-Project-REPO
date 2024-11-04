@@ -1,31 +1,45 @@
 {% extends 'main.html' %}
+
 {% block content %}
-<form method="POST">
-    {% csrf_token %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h2>When will you be available</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
 
-    <div class="mb-3">
-        <label for="date" class="form-label">Select Date</label>
-        {{ form.date }}  <!-- This renders the date input field -->
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Select Date</label>
+                            {{ form.date }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="start_time" class="form-label">Select Time Slot</label>
+                            <select name="start_time" class="form-control" required>
+                                {% for time, label in form.start_time.field.choices %}
+                                    <option value="{{ time }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="duration" class="form-label">Select Session Duration</label>
+                            <select name="duration" class="form-control" required>
+                                {% for duration, label in form.duration.field.choices %}
+                                    <option value="{{ duration }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Confirm Availability</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label for="start_time" class="form-label">Select Time Slot</label>
-        <select name="start_time" class="form-control" required>
-            {% for time, label in form.start_time.field.choices %}
-                <option value="{{ time }}">{{ label }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label for="duration" class="form-label">Select Session Duration</label>
-        <select name="duration" class="form-control" required>
-            {% for duration, label in form.duration.field.choices %}
-                <option value="{{ duration }}">{{ label }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Confirm Availability</button>
-</form>
+</div>
 {% endblock %}

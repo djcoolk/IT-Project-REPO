@@ -220,8 +220,8 @@ def user_details(request):
     if request.method == 'POST':
         form = SaveUserDetails(request.POST, request.FILES, instance=request.user)  # Update the instance
         if form.is_valid():
-            form.save()  # Save the updated user details
-            return redirect('home')  # Redirect after saving
+            form.save()
+            return redirect('home')
 
     context = {
         'form': form
@@ -243,6 +243,18 @@ def chatbot(request):
 @login_required
 def view_bookings(request):
     bookings = Booking.objects.filter(user=request.user, status='pending').order_by('date')
+    counsellors = CounsellorProfile.objects.all()
+
+    counsellor_id = request.GET.get('counsellor_id')
+    if counsellor_id:
+        bookings = bookings.filter(availability__counsellor_id=counsellor_id)
+
+    # Handle sorting by date
+    sort_by = request.GET.get('sort_by', 'asc')
+    if sort_by == 'desc':
+        bookings = bookings.order_by('-date')
+    else:
+        bookings = bookings.order_by('date')
 
     if request.method == 'POST':
         # Handle cancellation if a cancel button is pressed
@@ -257,7 +269,7 @@ def view_bookings(request):
             messages.success(request, 'Booking canceled successfully.')
             return redirect('view_bookings')
 
-    return render(request, 'view_bookings.html', {'bookings': bookings})
+    return render(request, 'view_bookings.html', {'bookings': bookings, 'counsellors':counsellors})
 
 @login_required()
 def rebook(request, counsellor_id):
@@ -267,10 +279,8 @@ def rebook(request, counsellor_id):
     if request.method == 'POST':
         user = request.user
         session_id = request.POST.get('session_id')
-
         try:
             selected_availability = CounsellorAvailability.objects.get(availability=session_id)
-
             # Create a new booking and set status
             booking = Booking.objects.create(
                 user=user,
@@ -330,6 +340,10 @@ def book_session(request, counsellor_id):
 
 @login_required()
 def set_availability(request):
+    if request.user.role.role_name != 'counsellor':
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('home')
+
     if request.method == 'POST':
         form = counsellor_availability_form(request.POST)
         if form.is_valid():
@@ -340,21 +354,13 @@ def set_availability(request):
                 counsellor=availability.counsellor,
                 date=availability.date,
                 start_time=availability.start_time,
-                duration=availability.duration
             ).exists():
                 messages.error(request, "Availability for this time already exists.")
             else:
                 availability.save()
                 messages.success(request, "Availability successfully set!")
             return redirect('set_availability')
-
     else:
         form = counsellor_availability_form()
 
     return render(request, 'set_availability.html', {'form': form})
-
-def homescreen(request):
-    return render(request, 'homescreen.html')
-
-def moodquiz(request):
-    return render(request, 'moodquiz.html')

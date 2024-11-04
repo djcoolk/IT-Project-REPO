@@ -67,16 +67,14 @@ class counsellor_availability_form(forms.ModelForm):
 class SaveUserDetails(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['email', 'bio', 'location', 'profile_picture', 'is_verified']
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'bio', 'location', 'profile_picture']  # Use the correct field names
         widgets = {
-            'First Name' : forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
             'bio': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Enter your bio...'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your location...'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email...'}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
-            'user_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'role_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_login': forms.TextInput(attrs={'class': 'form-control'}),
-            'is_verified': forms.CheckboxInput(attrs={'class': 'form-control'}),
         }
 

@@ -116,97 +116,108 @@
       height: 20px;
       border-radius: 50%;
     }
+    .streak-counter {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff; /* Change this to match your theme */
+    border-radius: 8px;
+    padding: 10px 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; /* Space below the streak counter */
+}
+
+.streak-number {
+    font-size: 2rem; /* Adjust as needed */
+    font-weight: bold;
+    color: #2C3E50; /* Change to match your design */
+    margin-right: 10px; /* Space between number and label */
+}
+
+.streak-label {
+    font-size: 1rem; /* Adjust as needed */
+    color: #7F8C8D; /* Lighter color for the label */
+}
+
 
   </style>
 </head>
 <body>
-   <!-- Header Section -->
-  <div class="header">
-    <div class="navbar">
-      <a href="#">Wellness Whisper</a>
-      <a href="#">Services</a>
-      <a href="#">About Us</a>
-      <a href="{% url 'login' %}">Login</a>
-    </div>
-  </div>
-
-  <!-- Main Banner -->
-  <div class="main-banner">
+   <!-- Main Banner -->
+<div class="main-banner">
     <h1>Wellness Whisper</h1>
     <p>Your Journey to Inner Peace Starts Here</p>
-    <a href="{% url 'register' %}" class="cta-button">Get Started</a>
-  </div>
+    <a href="{% url 'professionals' %}" class="cta-button">Book a session now</a>
+</div>
 
-  <!-- Services Section -->
-  <div class="services">
-    <!-- Login Streak Display -->
-    <div class="service-box" style="background-color: #bbdefb;">
-      <h3 class="service-title">Your login streak</h3>
-      <p class="service-desc">{{ user.login_streak }}</p>
+<!-- Mood Tracking Form Section -->
+<div class="container mt-4">
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3>Track Your Mood Now!</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <label for="mood_value">How do you feel?</label>
+                <select name="mood_value" id="mood_value">
+                    <option value="1">😞</option>
+                    <option value="2">😐</option>
+                    <option value="3">😊</option>
+                    <option value="4">😁</option>
+                    <option value="5">🥳</option>
+                </select>
+                <button type="submit" class="btn btn-primary mt-2">Track Mood</button>
+            </form>
+        </div>
     </div>
+</div>
 
-    <!-- Mood Tracking Form -->
-    <div class="service-box" style="background-color: #bbdefb;">
-      <h3 class="service-title">Track your mood now!</h3>
-      <form method="POST">
-        {% csrf_token %}
-        <label for="mood_value">How do you feel?</label>
-        <select name="mood_value" id="mood_value">
-            <option value="1">😞</option>
-            <option value="2">😐</option>
-            <option value="3">😊</option>
-            <option value="4">😁</option>
-            <option value="5">🥳</option>
-        </select>
-        <button type="submit">Track Mood</button>
-      </form>
+<!-- Weekly Mood Tracking Display Section -->
+<div class="container mt-4">
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3>Your Mood Tracking for the Current Week</h3>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Morning</th>
+                        <th>Afternoon</th>
+                        <th>Evening</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day, periods in mood_data.items %}
+                    <tr>
+                        <td>{{ day }}</td>
+                        <td>
+                            {% if periods.morning %}
+                                <div style="background-color: {{ periods.morning.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                            {% else %}
+                                <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if periods.afternoon %}
+                                <div style="background-color: {{ periods.afternoon.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                            {% else %}
+                                <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if periods.evening %}
+                                <div style="background-color: {{ periods.evening.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                            {% else %}
+                                <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <!-- Weekly Mood Tracking Display -->
-    <div class="service-box" style="background-color: #bbdefb;">
-      <h3 class="service-title">Your Mood Tracking for the Current Week</h3>
-     <table class="table">
-        <thead>
-            <tr>
-                <th>Day</th>
-                <th>Morning</th>
-                <th>Afternoon</th>
-                <th>Evening</th>
-            </tr>
-        </thead>
-           <tbody>
-            {% for day, periods in mood_data.items %}
-            <tr>
-                <td>{{ day }}</td>
-                <td>
-                    {% if periods.morning %}
-                        <div style="background-color: {{ periods.morning.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                    {% else %}
-                        <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if periods.afternoon %}
-                        <div style="background-color: {{ periods.afternoon.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                    {% else %}
-                        <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if periods.evening %}
-                        <div style="background-color: {{ periods.evening.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                    {% else %}
-                        <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-</tbody>
-    </table>
-    </div>
-  </div>
-
-</body>
-</html>
-
+</div>
 {% endblock %}

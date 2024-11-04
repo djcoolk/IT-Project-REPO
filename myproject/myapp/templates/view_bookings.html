@@ -1,26 +1,77 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
-<h2>Your Upcoming Bookings</h2>
+<div class="container mt-5">
+    <h2>Your Upcoming Bookings</h2>
 
-{% if bookings %}
-    <ul class="list-group">
-        {% for booking in bookings %}
-            <li class="list-group-item">
-                <strong>Date:</strong> {{ booking.date }}<br>
-                <strong>Time Slot:</strong> {{ booking.availability.start_time }}<br>
-                <strong>Duration:</strong> {{ booking.availability.duration }}<br>
-                <strong>Status:</strong> {{ booking.status }}<br>
-                <a href="{% url 'book_session' booking.availability.counsellor.counsellor_id %}" class="btn btn-warning">Rebook</a>
-                <form method="POST" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="booking_id" value="{{ booking.booking_id }}">
-                    <button type="submit" class="btn btn-danger">Cancel</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No upcoming bookings found.</p>
-{% endif %}
+    {% if bookings %}
+        <form method="GET" class="mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            <label for="counsellor" class="form-label">Filter by Counsellor:</label>
+            <select name="counsellor" id="counsellor" class="form-select">
+                <option value="">All Counsellors</option>
+                {% for counsellor in counsellors %}
+                    <option value="{{ counsellor.counsellor_id }}">{{ counsellor.user.first_name }} {{ counsellor.user.last_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="sort_by" class="form-label">Sort by Date:</label>
+            <select name="sort_by" id="sort_by" class="form-select">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+</form>
+
+        <div class="card shadow-sm mt-3">
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for booking in bookings %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <!-- Counsellor's Profile Picture -->
+                                <div class="mr-3">
+                                    {% if booking.availability.counsellor.profile_picture %}
+                                        <img src="{{ booking.availability.counsellor.profile_picture.url }}"
+                                             alt="{{ booking.availability.counsellor.user.first_name }}'s Profile Picture"
+                                             class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        <img src="{% static 'images/default-profile.png' %}"
+                                             alt="Default Profile Picture"
+                                             class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <strong>Counsellor:</strong> {{ booking.availability.counsellor.user.first_name }} {{ booking.availability.counsellor.user.last_name }}<br>
+                                    <strong>Date:</strong> {{ booking.availability.date|date:"j F Y" }}<br>
+                                    <strong>Time Slot:</strong> {{ booking.availability.start_time }}<br>
+                                    <strong>Duration:</strong> {{ booking.availability.duration }}<br>
+                                    <strong>Status:</strong> {{ booking.status }}<br>
+                                </div>
+                            </div>
+                            <div>
+                                <a href="{% url 'book_session' booking.availability.counsellor.counsellor_id %}" class="btn btn-warning btn-sm">Reschedule</a>
+                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="booking_id" value="{{ booking.booking_id }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-3" role="alert">
+            No upcoming bookings found.
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
