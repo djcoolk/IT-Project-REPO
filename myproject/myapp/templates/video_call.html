@@ -7,7 +7,7 @@
     <title>Makha's Video Chat</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     {% load static %}
-    <link rel='stylesheet' type='text/css' media='screen' href='{% static "myapp/main.css" %}'>
+    <link rel='stylesheet' type='text/css' media='screen' href='{% static "main.css" %}'>
 </head>
 <body>
 
@@ -19,11 +19,12 @@
         <div id="stream-controls">
             <button id="leave-btn">Leave Stream</button>
             <button id="mic-btn">Mic On</button>
-            <button id="camera-btn">Camera on</button>
+            <button id="camera-btn">Camera On</button>
         </div>
     </div>
 
-    <script src='{% static "AgoraRTC_N-4.22.0.js" %}'></script>
-    <script src='{% static "main.js" %}'></script>
+
+    <script src="{% static 'AgoraRTC_N-4.22.0.js' %}"></script>
+    <script src="{% static 'main.js' %}"></script>
 </body>
 {% endblock %}

@@ -1,5 +1,5 @@
 const APP_ID = "702d01c8ad8344cb88e485e096e41115";
-const TOKEN = "007eJxTYDgWkferUuXOfpHVabGKJ1w2brgxo+2OkPmKPaX7pmnwOvopMJgbGKUYGCZbJKZYGJuYJCdZWKSaWJimGliapZoYGhqa+l0VSG8IZGQI61FlZWSAQBCfhSE3MTOPgQEAQ6geQw==";
+const TOKEN = "007eJxTYNixaeGje5fvRlhoLxW6a5L3/UysuIf2OTaDJYuePTjnUHldgcHcwCjFwDDZIjHFwtjEJDnJwiLVxMI01cDSLNXE0NDQdOtGhfSGQEaG8K+JzIwMEAjiszDkJmbmMTAAAN3OIOQ=";
 const CHANNEL = "main";
 
 const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
@@ -11,10 +11,10 @@ let joinAndDisplayLocalStream = async () => {
     try {
         client.on('user-published', handleUserJoined);
         client.on('user-left', handleUserLeft);
-        
+
         let UID = await client.join(APP_ID, CHANNEL, TOKEN, null);
         console.log("User ID: ", UID);
-        
+
         localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
         console.log("Local tracks created: ", localTracks);
 
@@ -24,7 +24,7 @@ let joinAndDisplayLocalStream = async () => {
         document.getElementById('video-streams').insertAdjacentHTML('beforeend', player);
         localTracks[1].play(`user-${UID}`);
         console.log("Camera is playing: user-", UID);
-        
+
         await client.publish([localTracks[0], localTracks[1]]);
         console.log("Published local tracks");
     } catch (error) {

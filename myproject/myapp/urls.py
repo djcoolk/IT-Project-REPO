@@ -2,12 +2,13 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-
 from .views import logout_view
 
 urlpatterns = [
     path('', views.home, name='home'),
     path('home/', views.home, name='home'),
+    path('homescreen/', views.homescreen, name='homescreen'),
+    path('moodquiz/', views.moodquiz, name='moodquiz'),
     path('login/', views.login, name= 'login'),
     path('register/', views.register, name= 'register'),
     path('logout/', logout_view, name='logout'),
@@ -18,5 +19,5 @@ urlpatterns = [
     path('admin_home/', views.admin_home, name= 'admin_home'),
     path('view_bookings/', views.view_bookings, name= 'view_bookings'),
     path('chatbot/', views.chatbot, name= 'chatbot'),
-    path('video_call/', views.video_call, name= 'video_call')
+    path('video/', views.video_call, name= 'video_call')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

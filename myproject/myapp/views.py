@@ -109,3 +109,9 @@ def chatbot(request):
 @login_required
 def view_bookings(request):
     return render(request, 'view_bookings.html')
+
+def homescreen(request):
+    return render(request, 'homescreen.html')
+
+def moodquiz(request):
+    return render(request, 'moodquiz.html')
