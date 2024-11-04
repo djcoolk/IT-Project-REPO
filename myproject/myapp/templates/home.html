@@ -1,222 +1,81 @@
-{% extends 'main.html' %}
-{% load static %}
+{% extends "main.html" %}
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wellness Whisper</title>
-  <style>
-    body {
-      font-family: Georgia, serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f7fa;
-      color: #333;
-    }
-
-    .header, .navbar, .main-banner, .services {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .header {
-      background-color: #fff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .navbar a {
-      margin: 0 15px;
-      color: #2a2e66;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .navbar a:hover {
-      color: #4a82d1;
-    }
-
-    /* Main Banner with Background Image */
-    .main-banner {
-      background-image: url({% static   '/image/home_img.jpg'%});
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      color: navy; /* Change text color to blue */
-      padding: 100px 20px;
-      flex-direction: column;
-      text-align: center;
-      border-radius: 12px;
-      margin: 30px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-
-    .main-banner h1 {
-      font-size: 48px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .cta-button {
-      background-color: #4a82d1;
-      color: #fff;
-      padding: 15px 30px;
-      border-radius: 25px;
-      text-decoration: none;
-      font-size: 18px;
-      font-weight: bold;
-      transition: background-color 0.3s, box-shadow 0.3s;
-    }
-
-    .cta-button:hover {
-      background-color: #3a6aad;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    }
-
-    .services {
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 40px 20px;
-    }
-
-    /* Service Box Styling */
-    .service-box {
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      width: 200px;
-      text-align: center;
-      padding: 20px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .service-box:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .service-title {
-      font-size: 18px;
-      margin: 15px 0;
-      color: #2a2e66;
-    }
-
-    .service-desc {
-      font-size: 14px;
-      color: #777;
-    }
-
-    .mood-circle {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-    }
-    .streak-counter {
-    display: flex;
-    align-items: center;
-    background-color: #ffffff; /* Change this to match your theme */
-    border-radius: 8px;
-    padding: 10px 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px; /* Space below the streak counter */
-}
-
-.streak-number {
-    font-size: 2rem; /* Adjust as needed */
-    font-weight: bold;
-    color: #2C3E50; /* Change to match your design */
-    margin-right: 10px; /* Space between number and label */
-}
-
-.streak-label {
-    font-size: 1rem; /* Adjust as needed */
-    color: #7F8C8D; /* Lighter color for the label */
-}
-
-
-  </style>
-</head>
-<body>
-   <!-- Main Banner -->
-<div class="main-banner">
-    <h1>Wellness Whisper</h1>
+{% load static %}
+<div class="main-banner text-center text-white p-5 rounded mb-4" style="background-image: url('{% static 'image/home_img.jpg' %}'); background-size: cover; background-position: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+    <h1>Welcome to Wellness Whisper</h1>
     <p>Your Journey to Inner Peace Starts Here</p>
-    <a href="{% url 'professionals' %}" class="cta-button">Book a session now</a>
+    <a href="{% url 'professionals' %}" class="btn btn-primary mt-3">Book a session now</a>
 </div>
 
-<!-- Mood Tracking Form Section -->
 <div class="container mt-4">
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            <h3>Track Your Mood Now!</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5>Track Your Mood Now!</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <label for="mood_value">How do you feel?</label>
+                        <select name="mood_value" id="mood_value" class="form-select">
+                            <option value="1">😞</option>
+                            <option value="2">😐</option>
+                            <option value="3">😊</option>
+                            <option value="4">😁</option>
+                            <option value="5">🥳</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary mt-2">Track Mood</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <form method="POST">
-                {% csrf_token %}
-                <label for="mood_value">How do you feel?</label>
-                <select name="mood_value" id="mood_value">
-                    <option value="1">😞</option>
-                    <option value="2">😐</option>
-                    <option value="3">😊</option>
-                    <option value="4">😁</option>
-                    <option value="5">🥳</option>
-                </select>
-                <button type="submit" class="btn btn-primary mt-2">Track Mood</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Weekly Mood Tracking Display Section -->
-<div class="container mt-4">
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            <h3>Your Mood Tracking for the Current Week</h3>
-        </div>
-        <div class="card-body">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Day</th>
-                        <th>Morning</th>
-                        <th>Afternoon</th>
-                        <th>Evening</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for day, periods in mood_data.items %}
-                    <tr>
-                        <td>{{ day }}</td>
-                        <td>
-                            {% if periods.morning %}
-                                <div style="background-color: {{ periods.morning.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                            {% else %}
-                                <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if periods.afternoon %}
-                                <div style="background-color: {{ periods.afternoon.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                            {% else %}
-                                <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if periods.evening %}
-                                <div style="background-color: {{ periods.evening.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                            {% else %}
-                                <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5>Your Mood Tracking for the Current Week</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Morning</th>
+                                <th>Afternoon</th>
+                                <th>Evening</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day, periods in mood_data.items %}
+                            <tr>
+                                <td>{{ day }}</td>
+                                <td>
+                                    {% if periods.morning %}
+                                        <div class="mood-circle" style="background-color: {{ periods.morning.color }};"></div>
+                                    {% else %}
+                                        <div class="mood-circle bg-white border"></div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if periods.afternoon %}
+                                        <div class="mood-circle" style="background-color: {{ periods.afternoon.color }};"></div>
+                                    {% else %}
+                                        <div class="mood-circle bg-white border"></div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if periods.evening %}
+                                        <div class="mood-circle" style="background-color: {{ periods.evening.color }};"></div>
+                                    {% else %}
+                                        <div class="mood-circle bg-white border"></div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

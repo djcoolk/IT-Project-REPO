@@ -17,5 +17,6 @@ urlpatterns = [
     path('view-bookings/', views.view_bookings, name= 'view_bookings'),
     path('rebook/<int:counsellor_id>/', views.rebook, name='rebook'),
     path('chatbot/', views.chatbot, name= 'chatbot'),
-    path('video/', views.video_call, name= 'video_call')
+    path('video/', views.video_call, name= 'video_call'),
+    path('counsellor-home/', views.counsellor_home, name= 'counsellor_home'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

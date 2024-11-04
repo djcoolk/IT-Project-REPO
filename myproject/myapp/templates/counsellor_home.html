@@ -1,0 +1,77 @@
+{% extends "main.html" %}
+{% load static %}
+{% block title %}Counsellor Dashboard - Wellness Whisper{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Profile Section -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5>{{ counsellor.user.first_name }}'s Profile</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if counsellor.profile_picture %}
+                        <img src="{{ counsellor.profile_picture.url }}" alt="Profile Picture" class="rounded-circle mb-3" style="width: 100px; height: 100px;">
+                    {% else %}
+                        <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="rounded-circle mb-3" style="width: 100px; height: 100px;">
+                    {% endif %}
+                    <h6>Specialization: {{ counsellor.specialization }}</h6>
+                    <p>{{ counsellor.bio|default:"No bio available" }}</p>
+                    <p><strong>Qualification:</strong> {{ counsellor.qualification }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Availability Section -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5>My Availability</h5>
+                </div>
+                <div class="card-body">
+                    {% if availability %}
+                        <ul class="list-group">
+                            {% for slot in availability %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ slot.date }} - {{ slot.start_time }} to {{ slot.end_time }}</span>
+                                    <a href="{% url 'edit_availability' slot.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No availability set. <a href="{% url 'set_availability' %}">Set Availability</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Bookings Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+            <h5>Upcoming Bookings</h5>
+        </div>
+        <div class="card-body">
+            {% if bookings %}
+                <ul class="list-group">
+                    {% for booking in bookings %}
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ booking.user.first_name }} {{ booking.user.last_name }}</strong><br>
+                                    <small>Date: {{ booking.date }} | Time: {{ booking.availability.start_time }}</small>
+                                </div>
+                                <a href="{% url 'view_booking_details' booking.id %}" class="btn btn-outline-secondary btn-sm">View Details</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No upcoming bookings.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
