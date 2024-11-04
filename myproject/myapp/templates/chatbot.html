@@ -1,106 +1,176 @@
-{% extends 'main.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot - Wellness Whisper</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>WellnessWhisper Chatbot</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f5f5f5;
-        }
-        .chat-container {
-            max-width: 800px;
-            margin: 50px auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        .chat-header {
-            font-size: 20px;
-            font-weight: bold;
-            background-color: #5A67D8;
-            color: white;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-        }
-        .chat-box {
-            height: 400px;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid #e5e5e5;
-            background-color: #f9f9f9;
-            margin-bottom: 15px;
-        }
-        .user-message {
-            text-align: right;
-            margin-bottom: 10px;
-        }
-        .user-message p {
-            display: inline-block;
-            background-color: #5A67D8;
-            color: white;
-            padding: 10px;
-            border-radius: 10px;
-        }
-        .bot-message p {
-            display: inline-block;
-            background-color: #e2e8f0;
-            color: #333;
-            padding: 10px;
-            border-radius: 10px;
-        }
-        .input-group {
+        /* Reset */
+        body, html {
+            height: 100%;
+            margin: 0;
             display: flex;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
         }
-        .chat-input {
-            width: 90%;
-            padding: 10px;
+
+        /* Chat Interface */
+        .chat-interface {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .chat-header {
+            background-color: #6c63ff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        /* Chatbox */
+        .chatbox {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background-color: #f4f4f9;
+        }
+
+        .user-message, .bot-message {
+            margin-bottom: 15px;
+            padding: 15px;
             border-radius: 10px;
-            border: 1px solid #e5e5e5;
+            max-width: 75%;
+            font-size: 1.1em;
+            line-height: 1.5;
         }
-        .btn-send {
-            background-color: #4A5568;
-            color: white;
-            padding: 10px 20px;
+
+        .user-message {
+            background-color: #6c63ff;
+            color: #fff;
+            align-self: flex-end;
+        }
+
+        .bot-message {
+            background-color: #e0e0e0;
+            color: #333;
+            align-self: flex-start;
+        }
+
+        /* Input Section */
+        .input-section {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background-color: #f8f9fa;
+        }
+
+        .input-section input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.1em;
             border-radius: 10px;
-            margin-left: 10px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
         }
-        .btn-send:hover {
-            background-color: #2D3748;
+
+        .input-section button {
+            background-color: #6c63ff;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .input-section button:hover {
+            background-color: #5553d3;
         }
     </style>
 </head>
 <body>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            Wellness Whisper Chatbot
-        </div>
+<div class="chat-interface">
+    <!-- Header -->
+    <div class="chat-header">🌱 WellnessWhisper Chatbot</div>
 
-        <!-- Chat box -->
-        <div class="chat-box">
-            <div class="bot-message">
-                <p>Hello! How can I assist you today?</p>
-            </div>
-            <div class="user-message">
-                <p>I want to track my mood.</p>
-            </div>
-            <div class="bot-message">
-                <p>Sure! How are you feeling today on a scale of 1-5?</p>
-            </div>
-        </div>
-
-        <!-- Input area -->
-        <div class="input-group">
-            <input type="text" class="form-control chat-input" placeholder="Type your message...">
-            <button class="btn btn-send">Send</button>
+    <!-- Chatbox -->
+    <div class="chatbox" id="chatbox">
+        <!-- Initial bot message -->
+        <div class="bot-message">
+            Hi! I'm here to help with any questions you have about mental health.
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Input Section -->
+    <div class="input-section">
+        <form id="chat-form" method="post" class="w-100 d-flex">
+            {% csrf_token %}
+            <input type="text" id="user-input" placeholder="Type your message..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    document.getElementById('chat-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const userInput = document.getElementById('user-input').value;
+        if (!userInput) return;
+
+        // Append user message to chatbox
+        const chatbox = document.getElementById("chatbox");
+        const userMessage = document.createElement("div");
+        userMessage.className = "user-message";
+        userMessage.textContent = userInput;
+        chatbox.appendChild(userMessage);
+        document.getElementById("user-input").value = "";
+
+        try {
+            const response = await fetch('/chatbot_response/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ message: userInput })
+            });
+
+            const data = await response.json();
+
+            // Display bot response in chatbox
+            const botMessage = document.createElement("div");
+            botMessage.className = "bot-message";
+            botMessage.textContent = data.response || "I'm sorry, I didn't understand that.";
+            chatbox.appendChild(botMessage);
+
+            // Scroll chatbox to the bottom
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+        } catch (error) {
+            console.error("Error fetching response:", error);
+            const errorMessage = document.createElement("div");
+            errorMessage.className = "bot-message";
+            errorMessage.textContent = "Sorry, I encountered an error. Please try again later.";
+            chatbox.appendChild(errorMessage);
+        }
+    };
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
-
-{% endblock %}

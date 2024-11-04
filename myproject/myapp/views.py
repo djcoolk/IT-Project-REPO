@@ -6,9 +6,70 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.context_processors import request
 from .models import *
+from django.views.decorators.csrf import csrf_exempt
+from langchain_ollama import OllamaLLM
+from langchain_core.prompts import ChatPromptTemplate
+from django.http import JsonResponse
+import json
 from .forms import *
 from .utils import *
 from django.utils import timezone
+
+template = """
+You are a mental health support chatbot designed to engage in open-ended, empathetic conversations. Your role is to be a supportive friend, offering advice and encouragement while respecting boundaries and avoiding any clinical or diagnostic language.
+
+Here is the conversation history: {context}
+
+User Input: {user_input}
+
+When responding, acknowledge the user's emotions and experiences. Offer gentle advice on topics like self-care, stress relief, and resilience, and use a warm and friendly tone to convey understanding and support.
+
+Response:
+"""
+model = OllamaLLM(model="llama3.2")
+prompt = ChatPromptTemplate.from_template(template)
+chain = prompt | model
+
+# Store conversation context globally (consider database or session storage in production)
+
+
+@csrf_exempt
+def chatbot_response(request):
+
+    # Ensure conversation history is in the session
+    if "conversation_history" not in request.session:
+        request.session["conversation_history"] = []
+
+    if request.method == 'POST':
+        # Parse the JSON body
+        data = json.loads(request.body)
+        user_input = data.get('message')
+
+        # Retrieve session-specific context (last messages in history)
+        context = "\n".join(
+            [f"User: {msg['user']}\nAI: {msg['bot']}" for msg in request.session["conversation_history"]])
+
+        # Generate a response from the model
+        result = chain.invoke({"context": context, "user_input": user_input})
+
+        # Append the user and bot messages to the conversation history
+        request.session["conversation_history"].append({"user": user_input, "bot": result})
+
+        # Save the updated conversation history in the session
+        request.session.modified = True
+
+        # Return the response as JSON to the frontend
+        return JsonResponse({'response': result})
+
+
+def chatbot_page(request):
+    # Pass conversation history to the template
+    conversation_history = request.session.get("conversation_history", [])
+    return render(request, 'chatbot.html', {"conversation_history": conversation_history})
+
+
+
+
 
 User = get_user_model()
 
@@ -246,10 +307,6 @@ def video_call(request):
 @login_required
 def professionals(request):
     return render(request, 'professionals.html')
-
-@login_required
-def chatbot(request):
-    return render(request, 'chatbot.html')
 
 @login_required
 def view_bookings(request):
