@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Book a Session with {{ counsellor.user.first_name }} {{ counsellor.user.last_name }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="session" class="form-label">Select an Available Session</label>
+            <select name="session_id" id="session" class="form-control" required>
+                {% for availability in availability.all %}
+                    <option value="{{ availability.availability }}">
+                        {{ availability.date }} {{ availability.start_time }} - {{ availability.end_time }}
+                    </option>
+                {% empty %}
+                    <option disabled>No sessions available</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Book Session</button>
+    </form>
+</div>
+{% endblock %}
