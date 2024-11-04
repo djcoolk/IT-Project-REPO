@@ -14,10 +14,76 @@ User = get_user_model()
 
 @login_required(login_url='login')
 def home(request):
-    if request.user.is_authenticated:
-        return render(request, 'home.html')
-    else:
-        return redirect('login')
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+    if request.method == 'POST':
+        mood_value = request.POST.get('mood_value')
+        if mood_value:
+            current_hour = timezone.now().hour
+            time_period = None
+            if 0 <= current_hour < 12:
+                time_period = 'morning'
+            elif 12 <= current_hour < 17:
+                time_period = 'afternoon'
+            elif 17 <= current_hour < 24:
+                time_period = 'evening'
+
+            if time_period:
+                if not MoodTracking.objects.filter(
+                    user=request.user,
+                    timestamp__date=today,
+                    timestamp__hour__gte=current_hour - 3
+                ).exists():
+                    MoodTracking.objects.create(user=request.user, mood=int(mood_value), timestamp=timezone.now())
+                    messages.success(request, 'Mood tracked successfully.')
+                else:
+                    messages.warning(request, 'You have already tracked your mood for this time period.')
+            else:
+                messages.error(request, 'Invalid time period.')
+        return redirect('home')
+
+    mood_entries = MoodTracking.objects.filter(
+        user=request.user,
+        timestamp__date__gte=start_of_week,
+        timestamp__date__lte=today
+    ).order_by('timestamp')
+
+    mood_data = {day: {'morning': None, 'afternoon': None, 'evening': None} for day in days_of_week}
+
+    mood_colors = {
+        1: "#FF4D4D",  # Very sad - Red
+        2: "#FFA500",  # Sad - Orange
+        3: "#FFFF00",  # Neutral - Yellow
+        4: "#9ACD32",  # Happy - Light green
+        5: "#32CD32",  # Very happy - Green
+    }
+
+    day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    for entry in mood_entries:
+        day = entry.timestamp.date()
+        day_name = day_names[day.weekday()]
+        hour = entry.timestamp.hour
+
+        if 0 <= hour < 12:
+            period = 'morning'
+        elif 12 <= hour < 17:
+            period = 'afternoon'
+        elif 17 <= hour < 24:
+            period = 'evening'
+        else:
+            continue
+
+        if day_name in mood_data:
+            if mood_data[day_name][period] is None:
+                mood_data[day_name][period] = {
+                    'mood': entry.mood,
+                    'color': mood_colors[entry.mood]
+                }
+
+    return render(request, 'home.html', {'mood_data': mood_data, 'days_of_week': days_of_week})
 
 def login(request):
     if request.method == 'POST':

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission, AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.exceptions import ValidationError
 
 class MyUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -21,7 +22,6 @@ class MyUserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self.create_user(email, password, **extra_fields)
-
 # 1. Roles Table
 class Role(models.Model):
     class Meta:
@@ -141,11 +141,15 @@ class CallLog(models.Model):
 class MoodTracking(models.Model):
     class Meta:
         db_table = 'mood_tracking'
+        indexes = [models.Index(fields=['user', 'timestamp']),]
     mood_entry_id = models.AutoField(primary_key=True)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     mood = models.IntegerField()
-    entry_date = models.DateTimeField(auto_now_add=True)
-    comments = models.TextField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        if self.mood < 1 or self.mood > 5:
+            raise ValidationError('Mood must be between 1 and 5.')
 
     def __str__(self):
         return f"Mood {self.mood_entry_id} - Mood: {self.mood}"

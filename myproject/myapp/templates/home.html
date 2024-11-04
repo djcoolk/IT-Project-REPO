@@ -109,11 +109,18 @@
       font-size: 14px;
       color: #777;
     }
+
+    .mood-circle {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+
   </style>
 </head>
 <body>
-
-  <!-- Header Section -->
+   <!-- Header Section -->
   <div class="header">
     <div class="navbar">
       <a href="#">Wellness Whisper</a>
@@ -123,22 +130,79 @@
     </div>
   </div>
 
-   <!-- Main Banner -->
+  <!-- Main Banner -->
   <div class="main-banner">
     <h1>Wellness Whisper</h1>
     <p>Your Journey to Inner Peace Starts Here</p>
-    <a href="{% url 'register' %}"
-       class="cta-button">Get Started
-    </a><!-- Directs to register.html -->
+    <a href="{% url 'register' %}" class="cta-button">Get Started</a>
   </div>
-
-
 
   <!-- Services Section -->
   <div class="services">
+    <!-- Login Streak Display -->
     <div class="service-box" style="background-color: #bbdefb;">
       <h3 class="service-title">Your login streak</h3>
       <p class="service-desc">{{ user.login_streak }}</p>
+    </div>
+
+    <!-- Mood Tracking Form -->
+    <div class="service-box" style="background-color: #bbdefb;">
+      <h3 class="service-title">Track your mood now!</h3>
+      <form method="POST">
+        {% csrf_token %}
+        <label for="mood_value">How do you feel?</label>
+        <select name="mood_value" id="mood_value">
+            <option value="1">😞</option>
+            <option value="2">😐</option>
+            <option value="3">😊</option>
+            <option value="4">😁</option>
+            <option value="5">🥳</option>
+        </select>
+        <button type="submit">Track Mood</button>
+      </form>
+    </div>
+
+    <!-- Weekly Mood Tracking Display -->
+    <div class="service-box" style="background-color: #bbdefb;">
+      <h3 class="service-title">Your Mood Tracking for the Current Week</h3>
+     <table class="table">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Morning</th>
+                <th>Afternoon</th>
+                <th>Evening</th>
+            </tr>
+        </thead>
+           <tbody>
+            {% for day, periods in mood_data.items %}
+            <tr>
+                <td>{{ day }}</td>
+                <td>
+                    {% if periods.morning %}
+                        <div style="background-color: {{ periods.morning.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                    {% else %}
+                        <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if periods.afternoon %}
+                        <div style="background-color: {{ periods.afternoon.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                    {% else %}
+                        <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if periods.evening %}
+                        <div style="background-color: {{ periods.evening.color }}; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                    {% else %}
+                        <div style="background-color: #fff; border-radius: 50%; width: 30px; height: 30px; display: inline-block;"></div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+</tbody>
+    </table>
     </div>
   </div>
 
