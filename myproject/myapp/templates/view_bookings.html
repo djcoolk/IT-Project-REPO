@@ -56,7 +56,7 @@
                                 </div>
                             </div>
                             <div>
-                                <a href="{% url 'book_session' booking.availability.counsellor.counsellor_id %}" class="btn btn-warning btn-sm">Reschedule</a>
+                                <a href="{% url 'user_rebook' booking.availability.counsellor.counsellor_id %}" class="btn btn-warning btn-sm">Reschedule</a>
                                 <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
                                     {% csrf_token %}
                                     <input type="hidden" name="booking_id" value="{{ booking.booking_id }}">

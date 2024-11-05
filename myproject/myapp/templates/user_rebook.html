@@ -1,0 +1,25 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Reschedule Booking</h2>
+    <p>Current Slot: {{ booking.availability.date|date:"j F Y" }} at {{ booking.availability.start_time }}</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="new_availability">Choose a new time slot:</label>
+            <select name="new_availability" id="new_availability" class="form-select">
+                {% for slot in available_slots %}
+                    <option value="{{ slot.id }}">{{ slot.date|date:"j F Y" }} - {{ slot.start_time }} ({{ slot.duration }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Confirm Reschedule</button>
+            <a href="{% url 'view_bookings' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

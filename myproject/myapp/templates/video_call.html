@@ -1,29 +1,58 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Makha's Video Chat</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    {% load static %}
-    <link rel='stylesheet' type='text/css' media='screen' href='{% static "main.css" %}'>
-</head>
-<body>
+{% extends 'main.html' %}
+{% load static %}
+{% block title %}Video Chat - Wellness Whisper{% endblock %}
 
-    <button id="join-btn">Join Stream</button>
+{% block content %}
+<div class="container text-center mt-5">
+    <button id="join-btn" class="btn btn-success mb-4">Join Stream</button>
 
-    <div id="stream-wrapper">
-        <div id="video-streams"></div>
+    <div id="stream-wrapper" style="display: none;">
+        <div id="video-streams" class="mb-3" style="height: 400px; background-color: #333;"></div>
 
         <div id="stream-controls">
-            <button id="leave-btn">Leave Stream</button>
-            <button id="mic-btn">Mic On</button>
-            <button id="camera-btn">Camera On</button>
+            <button id="leave-btn" class="btn btn-danger">Leave Stream</button>
+            <button id="mic-btn" class="btn btn-primary">Mic On</button>
+            <button id="camera-btn" class="btn btn-primary">Camera On</button>
         </div>
     </div>
+</div>
 
+<script src="{% static 'AgoraRTC_N-4.22.0.js' %}"></script>
+<script src="{% static 'main.js' %}"></script>
 
-    <script src="{% static 'AgoraRTC_N-4.22.0.js' %}"></script>
-    <script src="{% static 'main.js' %}"></script>
-</body>
-</html>
+<script>
+    const joinBtn = document.getElementById('join-btn');
+    const leaveBtn = document.getElementById('leave-btn');
+    const micBtn = document.getElementById('mic-btn');
+    const cameraBtn = document.getElementById('camera-btn');
+    const streamWrapper = document.getElementById('stream-wrapper');
+
+    joinBtn.addEventListener('click', () => {
+        streamWrapper.style.display = 'block';
+        joinBtn.style.display = 'none';
+        // Initialize and join stream using AgoraRTC here
+    });
+
+    leaveBtn.addEventListener('click', () => {
+        streamWrapper.style.display = 'none';
+        joinBtn.style.display = 'block';
+        // Disconnect stream logic here
+    });
+
+    micBtn.addEventListener('click', () => {
+        const micOn = micBtn.textContent === 'Mic On';
+        micBtn.textContent = micOn ? 'Mic Off' : 'Mic On';
+        micBtn.classList.toggle('btn-secondary');
+        micBtn.classList.toggle('btn-primary');
+        // Agora mic toggle logic here
+    });
+
+    cameraBtn.addEventListener('click', () => {
+        const camOn = cameraBtn.textContent === 'Camera On';
+        cameraBtn.textContent = camOn ? 'Camera Off' : 'Camera On';
+        cameraBtn.classList.toggle('btn-secondary');
+        cameraBtn.classList.toggle('btn-primary');
+        // Agora camera toggle logic here
+    });
+</script>
+{% endblock %}

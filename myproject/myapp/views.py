@@ -358,36 +358,38 @@ def view_bookings(request):
 
     return render(request, 'view_bookings.html', {'bookings': bookings, 'counsellors':counsellors})
 
-@login_required()
-def rebook(request, counsellor_id):
-    counsellor = get_object_or_404(CounsellorProfile, counsellor_id=counsellor_id)
-    availability = counsellor.availability.filter(is_available=True)  # Get available slots
+@login_required
+def user_rebook(request, booking_id):
+    booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
+    available_slots = CounsellorAvailability.objects.filter(
+        counsellor=booking.availability.counsellor,
+        is_available=True
+    ).exclude(id=booking.availability.id)
 
     if request.method == 'POST':
-        user = request.user
-        session_id = request.POST.get('session_id')
-        try:
-            selected_availability = CounsellorAvailability.objects.get(availability=session_id)
-            # Create a new booking and set status
-            booking = Booking.objects.create(
-                user=user,
-                availability=selected_availability,
-                booking_date=datetime.today().date(),
-                status="pending"  # Set the status to pending
-            )
-            selected_availability.is_available = False
-            selected_availability.save()
+        new_availability_id = request.POST.get('new_availability')
+        new_availability = get_object_or_404(CounsellorAvailability, id=new_availability_id)
 
-            messages.success(request, "Booking successful!")
-            return redirect('view_bookings')  # Redirect to view bookings
+        # Update old slot and booking details
+        booking.availability.is_available = True  # Mark old slot as available
+        booking.availability.save()
 
-        except CounsellorAvailability.DoesNotExist:
-            messages.error(request, "No available session for this counsellor.")
-            return redirect('professionals')
+        # Update booking with new slot
+        booking.availability = new_availability
+        booking.date = new_availability.date
+        booking.status = 'pending'
+        booking.save()
 
-    return render(request, 'book_session.html', {
-        'counsellor': counsellor,
-        'availability': availability
+        # Mark the new slot as booked
+        new_availability.is_available = False
+        new_availability.save()
+
+        messages.success(request, "Booking successfully rebooked.")
+        return redirect('view_bookings')  # Redirect to user's bookings page
+
+    return render(request, 'user_rebook.html', {
+        'booking': booking,
+        'available_slots': available_slots,
     })
 
 @login_required
