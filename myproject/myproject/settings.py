@@ -23,7 +23,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'k5943570@gmail.com'
-EMAIL_HOST_PASSWORD = 'ixfjwdNHYngSD2'
+EMAIL_HOST_PASSWORD = 'chhx nlra bhja uiat'
 DEFAULT_FROM_EMAIL = 'Wellness Whisper <k5943570@gmail.com>'
 
 
