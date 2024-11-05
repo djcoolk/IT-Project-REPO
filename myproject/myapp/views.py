@@ -192,7 +192,7 @@ User = get_user_model()
 
 def register(request):
     step = request.GET.get('step') or '1'  # Default to step 1
-
+    form = None
     # Step 1: Initial Register Form
     if step == '1':
         form = register_form(request.POST or None)
@@ -264,17 +264,7 @@ def register(request):
                     experience_years=request.session.get('experience_years'),
                     bio=request.session.get('counsellor_bio')
                 )
-                availability_data = request.session.get('availability')
-                availability_date = datetime.fromisoformat(availability_data['date']).date()
-                start_time = datetime.strptime(availability_data['start_time'], '%H:%M').time()
-                duration_parts = list(map(int, availability_data['duration'].split(':')))
-                duration = timedelta(hours=duration_parts[0], minutes=duration_parts[1], seconds=duration_parts[2])
-                CounsellorAvailability.objects.create(
-                    counsellor=counsellor_profile,
-                    date=availability_date,
-                    start_time=start_time,
-                    duration=duration
-                )
+
             auth_login(request, user)
             messages.success(request, "Registration successful!")
             # Clear session data
@@ -354,14 +344,11 @@ def view_bookings(request):
 @login_required
 def user_rebook(request, booking_id):
     booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
-    available_slots = CounsellorAvailability.objects.filter(
-        counsellor=booking.availability.counsellor,
-        is_available=True
-    ).exclude(id=booking.availability.id)
+    available_slots = CounsellorAvailability.objects.filter(counsellor=booking.availability.counsellor,is_available=True).exclude(availability=booking.availability.availability)
 
     if request.method == 'POST':
         new_availability_id = request.POST.get('new_availability')
-        new_availability = get_object_or_404(CounsellorAvailability, id=new_availability_id)
+        new_availability = get_object_or_404(CounsellorAvailability, availability=new_availability_id)
 
         # Update old slot and booking details
         booking.availability.is_available = True  # Mark old slot as available
