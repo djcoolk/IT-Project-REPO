@@ -48,30 +48,41 @@
         </div>
     </div>
 
-    <!-- Upcoming Bookings Section -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-info text-white">
-            <h5>Upcoming Bookings</h5>
-        </div>
-        <div class="card-body">
-            {% if bookings %}
-                <ul class="list-group">
-                    {% for booking in bookings %}
-                        <li class="list-group-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{ booking.user.first_name }} {{ booking.user.last_name }}</strong><br>
-                                    <small>Date: {{ booking.date|date:"jS F Y" }} | Time: {{ booking.availability.start_time }}</small>
-                                </div>
-                                <a href="{% url 'view_booking_details' booking.id %}" class="btn btn-outline-secondary btn-sm">View Details</a>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No upcoming bookings.</p>
-            {% endif %}
-        </div>
+<!-- Upcoming Bookings Section -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-info text-white">
+        <h5>Upcoming Bookings</h5>
     </div>
+    <div class="card-body">
+    {% if bookings %}
+        <ul class="list-group">
+            {% for booking in bookings %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ booking.user.first_name }} {{ booking.user.last_name }}</strong><br>
+                            <small>Date: {{ booking.date|date:"jS F Y" }} | Time: {{ booking.availability.start_time }}</small>
+                        </div>
+                        <div>
+                            <!-- Cancel Button -->
+                            <form method="post" action="{% url 'counsellor_cancel_booking' booking.booking_id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Cancel</button>
+                            </form>
+
+                            <!-- Rebook Button -->
+                            <a href="{% url 'counsellor_rebook' booking.booking_id %}" class="btn btn-outline-primary btn-sm">Rebook</a>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No upcoming bookings.</p>
+    {% endif %}
+</div>
+
+</div>
+
 </div>
 {% endblock %}

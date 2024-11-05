@@ -5,11 +5,13 @@ from django.contrib.auth import login as auth_login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.context_processors import request
+from django.urls import reverse
+
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 import json
 from .forms import *
 from .utils import *
@@ -66,10 +68,6 @@ def chatbot_page(request):
     # Pass conversation history to the template
     conversation_history = request.session.get("conversation_history", [])
     return render(request, 'chatbot.html', {"conversation_history": conversation_history})
-
-
-
-
 
 User = get_user_model()
 
@@ -155,7 +153,13 @@ def counsellor_home(request):
     if request.user.role.role_name != 'counsellor':
         return redirect('home')
     else:
-        return render(request, 'counsellor_home.html')
+        counsellor_profile = request.user.counsellorprofile
+        bookings = Booking.objects.filter(availability__counsellor=counsellor_profile, status="pending").order_by('date')
+
+        return render(request, 'counsellor_home.html', {
+            'user': request.user,
+            'bookings': bookings,
+        })
 
 def login(request):
     if request.method == 'POST':
@@ -467,3 +471,55 @@ def edit_availability(request, availability_id):
         form = counsellor_availability_form(instance=availability)
 
     return render(request, 'edit_availability.html', {'form': form, 'availability': availability})
+
+
+@login_required
+def counsellor_rebook(request, booking_id):
+    booking = get_object_or_404(Booking, booking_id=booking_id, availability__counsellor=request.user.counsellorprofile)
+    available_slots = CounsellorAvailability.objects.filter(
+        counsellor=request.user.counsellorprofile, is_available=True
+    ).exclude(availability=booking.availability.availability)
+
+    if request.method == 'POST':
+        # Get the selected slot from the form
+        new_availability_id = request.POST.get('new_availability')
+        new_availability = get_object_or_404(CounsellorAvailability, availability=new_availability_id)
+
+        # Update booking with the new slot
+        booking.availability.is_available = True  # Mark old slot as available
+        booking.availability.save()
+
+        booking.availability = new_availability
+        booking.date = new_availability.date
+        booking.status = 'pending'  # Set status back to pending
+
+        new_availability.is_available = False  # Mark new slot as booked
+        new_availability.save()
+
+        booking.save()
+
+        messages.success(request, "Booking successfully rebooked.")
+        return HttpResponseRedirect(reverse('counsellor_home'))
+
+    return render(request, 'counsellor_rebook.html', {
+        'booking': booking,
+        'available_slots': available_slots,
+    })
+
+
+@login_required
+def counsellor_cancel_booking(request, booking_id):
+    booking = get_object_or_404(Booking, booking_id=booking_id, availability__counsellor=request.user.counsellorprofile)
+
+    if request.method == 'POST':
+        # Set booking status to canceled
+        booking.status = 'canceled'
+
+        # Mark availability as available again
+        booking.availability.is_available = True
+        booking.availability.save()
+
+        booking.save()
+        messages.success(request, "Booking canceled successfully.")
+
+    return HttpResponseRedirect(reverse('counsellor_home'))

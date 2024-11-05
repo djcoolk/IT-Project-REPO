@@ -15,8 +15,8 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'set_availability' %}">Schedule Availability</a></li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'professionals' %}">Book a session</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'view_bookings' %}">View Bookings</a></li>
                     {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'view_bookings' %}">View Bookings</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log out</a></li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
