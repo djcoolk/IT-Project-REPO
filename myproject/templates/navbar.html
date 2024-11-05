@@ -9,7 +9,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'chatbot' %}">Chat to our bot</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'chatbot_page' %}">Chat to our bot</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'video_call' %}">Join a call</a></li>
                     {% if user.role.role_name == "counsellor" %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'set_availability' %}">Schedule Availability</a></li>

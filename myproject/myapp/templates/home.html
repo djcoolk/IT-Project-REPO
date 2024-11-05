@@ -1,6 +1,7 @@
 {% extends "main.html" %}
 {% block content %}
 {% load static %}
+
 <div class="main-banner text-center text-white p-5 rounded mb-4" style="background-image: url('{% static 'image/home_img.jpg' %}'); background-size: cover; background-position: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
     <h1>Welcome to Wellness Whisper</h1>
     <p>Your Journey to Inner Peace Starts Here</p>
@@ -19,11 +20,11 @@
                         {% csrf_token %}
                         <label for="mood_value">How do you feel?</label>
                         <select name="mood_value" id="mood_value" class="form-select">
-                            <option value="1">😞</option>
-                            <option value="2">😐</option>
-                            <option value="3">😊</option>
-                            <option value="4">😁</option>
-                            <option value="5">🥳</option>
+                            <option value="1">Very Bad 😞</option>
+                            <option value="2">Below Average 😕</option>
+                            <option value="3">Neutral 😊</option>
+                            <option value="4">Happy 😁</option>
+                            <option value="5">Excellent 🥳</option>
                         </select>
                         <button type="submit" class="btn btn-primary mt-2">Track Mood</button>
                     </form>
@@ -79,4 +80,16 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
+
+<style>
+    /* Mood circle styling */
+    .mood-circle {
+        width: 2px;
+        height: 2px;
+        border-radius: 50%;
+        display: inline-block;
+        border: 1px solid #ccc; /* Light border for empty circles */
+    }
+</style>

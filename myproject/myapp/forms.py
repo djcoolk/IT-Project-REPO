@@ -1,5 +1,5 @@
 from django import forms
-from . import models
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from datetime import time, timedelta
 from .models import *
@@ -12,8 +12,33 @@ class login_form(forms.Form):
 
 class register_form(forms.Form):
     email = forms.EmailField(label='Email', max_length=50)
-    password = forms.CharField(label='Password', widget=forms.PasswordInput, max_length=50)
-    role = forms.BooleanField(required=False,label="Register as a Counsellor",help_text="Select this if you are a counselor.")
+    password1 = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput,
+        max_length=50
+    )
+    password2 = forms.CharField(
+        label='Confirm Password',
+        widget=forms.PasswordInput,
+        max_length=50
+    )
+    role = forms.BooleanField(
+        required=False,
+        label="Register as a Counsellor",
+        help_text="Select this if you are a counselor."
+    )
+
+    def clean_password2(self):
+        # Get both password fields from cleaned_data
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        # Check if passwords match
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords do not match.")
+        return password2
+
+
 
 class user_details_form(forms.Form):
     first_name = forms.CharField(label='First Name', max_length=50)

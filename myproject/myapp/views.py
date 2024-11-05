@@ -79,14 +79,14 @@ def home(request):
         return redirect('counsellor_home')
     else:
 
-        today = timezone.now().date()
+        today = timezone.localtime().date()
         start_of_week = today - timedelta(days=today.weekday())
         days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
         if request.method == 'POST':
             mood_value = request.POST.get('mood_value')
             if mood_value:
-                current_hour = timezone.now().hour
+                current_hour = timezone.localtime().hour
                 time_period = None
                 if 0 <= current_hour < 12:
                     time_period = 'morning'
@@ -178,23 +178,35 @@ def login(request):
 
 def register(request):
     step = request.GET.get('step') or '1' # Default to step 1
-
     # Step 1: Initial Register Form
     if step == '1':
         form = register_form(request.POST or None)
-        if request.method == 'POST' and form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            role = form.cleaned_data['role']
+        try:
+            if request.method == 'POST' and form.is_valid():
+                email = form.cleaned_data['email']
+                password = form.cleaned_data['password1']
+                role = form.cleaned_data['role']
 
-            if User.objects.filter(email=email).exists():
-                messages.error(request, "An account with this email already exists.")
-                return redirect('/register?step=1')
+                if User.objects.filter(email=email).exists():
+                    messages.error(request, "An account with this email already exists.")
+                    return redirect('/register?step=1')
+
+                request.session['email'] = email
+                request.session['password'] = password
+                request.session['role'] = 2 if role else 1
+                return redirect('/register?step=2')
+            else:
+                print("Form errors:", form.errors)  # Detailed error output for troubleshooting
+        except Exception as e:
+            print("Exception during form validation:", str(e))  # Print exception details
+            messages.error(request, f"An error occurred during form validation: {e}")
 
             request.session['email'] = email
             request.session['password'] = password
             request.session['role'] = 2 if role else 1
             return redirect('/register?step=2')
+        else:
+            print("Form errors:", form.errors)
 
     elif step == '2':
         form = user_details_form(request.POST or None)
@@ -240,7 +252,10 @@ def register(request):
                 location=request.session.get('location'),
                 profile_picture=request.session.get('profile_picture'),
             )
-            user.role = Role.objects.get(role_id=request.session.get('role'))
+            if request.session.get('role'):
+                user.role = Role.objects.get(role_id=2)
+            else:
+                user.role = Role.objects.get(role_id=1)
             user.save()
 
             if request.session.get('role') == 2:
@@ -432,3 +447,23 @@ def set_availability(request):
         form = counsellor_availability_form()
 
     return render(request, 'set_availability.html', {'form': form})
+
+@login_required
+def edit_availability(request, availability_id):
+    if request.user.role.role_name != 'counsellor':
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('home')
+    availability = get_object_or_404(CounsellorAvailability, availability=availability_id, counsellor_id=request.user.counsellorprofile.counsellor_id)
+
+    if request.method == 'POST':
+        form = counsellor_availability_form(request.POST, instance=availability)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Availability updated successfully.')
+            return redirect('counsellor_home')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = counsellor_availability_form(instance=availability)
+
+    return render(request, 'edit_availability.html', {'form': form, 'availability': availability})
