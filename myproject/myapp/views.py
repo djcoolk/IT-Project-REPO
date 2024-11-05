@@ -63,7 +63,6 @@ def chatbot_response(request):
         # Return the response as JSON to the frontend
         return JsonResponse({'response': result})
 
-
 def chatbot_page(request):
     # Pass conversation history to the template
     conversation_history = request.session.get("conversation_history", [])
@@ -180,8 +179,20 @@ def login(request):
         form = login_form()
     return render(request, 'login.html', {'form': form})
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import login as auth_login, get_user_model
+from django.urls import reverse
+from django.utils import timezone
+from .forms import register_form, user_details_form, extra_details_form, register_counsellor_form, counsellor_availability_form
+from .models import Role, CounsellorProfile, CounsellorAvailability
+from datetime import datetime, timedelta
+
+User = get_user_model()
+
 def register(request):
-    step = request.GET.get('step') or '1' # Default to step 1
+    step = request.GET.get('step') or '1'  # Default to step 1
+
     # Step 1: Initial Register Form
     if step == '1':
         form = register_form(request.POST or None)
@@ -204,13 +215,6 @@ def register(request):
         except Exception as e:
             print("Exception during form validation:", str(e))  # Print exception details
             messages.error(request, f"An error occurred during form validation: {e}")
-
-            request.session['email'] = email
-            request.session['password'] = password
-            request.session['role'] = 2 if role else 1
-            return redirect('/register?step=2')
-        else:
-            print("Form errors:", form.errors)
 
     elif step == '2':
         form = user_details_form(request.POST or None)
@@ -256,7 +260,7 @@ def register(request):
                 location=request.session.get('location'),
                 profile_picture=request.session.get('profile_picture'),
             )
-            if request.session.get('role'):
+            if request.session.get('role') == 2:
                 user.role = Role.objects.get(role_id=2)
             else:
                 user.role = Role.objects.get(role_id=1)
@@ -282,7 +286,6 @@ def register(request):
                     duration=duration
                 )
             auth_login(request, user)
-            streak_counter(user)
             messages.success(request, "Registration successful!")
             # Clear session data
             for key in [
@@ -474,7 +477,6 @@ def edit_availability(request, availability_id):
 
     return render(request, 'edit_availability.html', {'form': form, 'availability': availability})
 
-
 @login_required
 def counsellor_rebook(request, booking_id):
     booking = get_object_or_404(Booking, booking_id=booking_id, availability__counsellor=request.user.counsellorprofile)
@@ -507,7 +509,6 @@ def counsellor_rebook(request, booking_id):
         'booking': booking,
         'available_slots': available_slots,
     })
-
 
 @login_required
 def counsellor_cancel_booking(request, booking_id):

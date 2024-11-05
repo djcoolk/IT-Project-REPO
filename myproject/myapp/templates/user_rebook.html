@@ -12,7 +12,7 @@
             <label for="new_availability">Choose a new time slot:</label>
             <select name="new_availability" id="new_availability" class="form-select">
                 {% for slot in available_slots %}
-                    <option value="{{ slot.id }}">{{ slot.date|date:"j F Y" }} - {{ slot.start_time }} ({{ slot.duration }})</option>
+                    <option value="{{ slot.availability }}">{{ slot.date|date:"j F Y" }} - {{ slot.start_time }} ({{ slot.duration }})</option>
                 {% endfor %}
             </select>
         </div>
