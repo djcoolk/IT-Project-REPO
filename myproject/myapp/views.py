@@ -237,16 +237,6 @@ def register(request):
             request.session['qualification'] = form.cleaned_data['qualification']
             request.session['experience_years'] = form.cleaned_data['experience_years']
             request.session['counsellor_bio'] = form.cleaned_data['bio']
-            return redirect('/register?step=5')
-
-    elif step == '5':
-        form = counsellor_availability_form(request.POST or None)
-        if request.method == 'POST' and form.is_valid():
-            request.session['availability'] = {
-                'date': form.cleaned_data['date'].isoformat(),
-                'start_time': form.cleaned_data['start_time'],
-                'duration': str(form.cleaned_data['duration'])
-            }
             return redirect('/register?step=complete')
 
     elif step == "complete":
