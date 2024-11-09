@@ -266,6 +266,7 @@ def register(request):
                 )
 
             auth_login(request, user)
+            streak_counter(user)
             messages.success(request, "Registration successful!")
             # Clear session data
             for key in [

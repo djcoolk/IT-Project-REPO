@@ -92,7 +92,7 @@ class extra_details_form(forms.Form):
         label='Location',
         max_length=50,
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your location...'})
+        widget=forms.ModelChoiceField(queryset=City.objects.all())
     )
     bio = forms.CharField(
         label='Bio',
@@ -147,7 +147,7 @@ class SaveUserDetails(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
             'bio': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Enter your bio...'}),
-            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your location...'}),
+            'location': forms.ModelChoiceField(queryset=City.objects.all()),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email...'}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
         }

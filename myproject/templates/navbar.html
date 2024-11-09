@@ -1,5 +1,5 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #ffffff; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
     <div class="container">
         <a class="navbar-brand" href="{% if user.is_authenticated and user.is_counsellor %}{% url 'counsellor_home' %}{% else %}{% url 'home' %}{% endif %}">Wellness Whisper</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,7 +17,6 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'professionals' %}">Book a session</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'view_bookings' %}">View Bookings</a></li>
                     {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log out</a></li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                 {% endif %}
@@ -28,9 +27,15 @@
                     <div class="streak-counter me-3">
                         <span class="streak-number">{{ user.login_streak }}</span> Days Streak
                     </div>
-                    <a class="nav-link" href="{% url 'user_details' %}">
-                        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-profile.png' %}{% endif %}" class="rounded-circle" style="width:40px; height: 40px;" alt="User profile picture">
-                    </a>
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-profile.png' %}{% endif %}" class="rounded-circle" style="width:40px; height: 40px;" alt="User profile picture">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="{% url 'user_details' %}">Change Personal Details</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+                        </ul>
+                    </div>
                 </div>
             {% endif %}
         </div>
