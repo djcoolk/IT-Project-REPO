@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission, AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.exceptions import ValidationError
-from cities.models import Country, City
 
 class MyUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -47,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.ForeignKey('Role', on_delete=models.SET_NULL, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True,default='default.png')
     bio = models.TextField(blank=True, null=True)
-    location = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
     login_streak = models.IntegerField(default=0)
     is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

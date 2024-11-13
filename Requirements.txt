@@ -2,4 +2,3 @@ Django == 5.0.9
 mssql-django == 1.5
 pyodbc == 5.1.0
 pillow==11.0.0
-django-cities==0.6.2
