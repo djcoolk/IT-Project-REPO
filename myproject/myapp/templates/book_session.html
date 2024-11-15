@@ -14,8 +14,8 @@
             <div class="d-flex align-items-start mb-4">
                 <!-- Profile Picture -->
                 <div>
-                    {% if counsellor.profile_picture %}
-                        <img src="{{ counsellor.profile_picture.url }}" alt="{{ counsellor.user.first_name }}'s Profile Picture" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                    {% if counsellor.user.profile_picture %}
+                        <img src="{{ counsellor.user.profile_picture.url }}" alt="{{ counsellor.user.first_name }}'s Profile Picture" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                     {% else %}
                         <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                     {% endif %}
@@ -50,7 +50,7 @@
                             <select name="session_id" id="session" class="form-control" required>
                                 {% for availability in availability.all %}
                                     <option value="{{ availability.availability }}">
-                                        {{ availability.date }} {{ availability.start_time }} - {{ availability.end_time }}
+                                        {{ availability.date }} {{ availability.start_time }} - Duration: {{ availability.duration }}
                                     </option>
                                 {% empty %}
                                     <option disabled>No sessions available</option>

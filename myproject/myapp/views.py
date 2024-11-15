@@ -168,8 +168,8 @@ def login(request):
             password = form.cleaned_data['password']
             user = authenticate(request, email=email, password=password)
             if user is not None:
-                auth_login(request, user)  # Log the user in
                 streak_counter(user)
+                auth_login(request, user)  # Log the user in
                 messages.success(request, 'log in successful.')
                 return redirect('home')  # Redirect to home after successful login
             else:
