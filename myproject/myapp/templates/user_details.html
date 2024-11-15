@@ -15,22 +15,30 @@
         {% endif %}
         </div>
         <div class="mb-3">
-            {{ form.profile_picture|add_class:"form-control" }}
+            {{ form.profile_picture }}
         </div>
         <div class="mb-3">
             <label for="first_name" class="form-label">First Name</label>
-            {{ form.first_name|add_class:"form-control" }}
+            {{ form.first_name }}
         </div>
         <div class="mb-3">
             <label for="last_name" class="form-label">Last Name</label>
-            {{ form.last_name|add_class:"form-control" }}
+            {{ form.last_name }}
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            {{ form.email|add_class:"form-control" }}
+            {{ form.email }}
+        </div>
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            {{ form.location}}
+        </div>
+        <div class="mb-3">
+            <label for="bio" class="form-label">Bio</label>
+            {{ form.bio}}
         </div>
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Save Details</button>
         </div>
     </form>
  <script>

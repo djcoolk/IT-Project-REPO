@@ -37,7 +37,6 @@ class register_form(forms.Form):
     role = forms.BooleanField(
         required=False,
         label="Register as a Counsellor",
-        help_text="Select this if you are a counselor.",
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
 

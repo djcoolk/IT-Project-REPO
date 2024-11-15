@@ -286,16 +286,17 @@ def register(request):
 def logout_view(request):
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
-    return redirect('home')
+    return redirect('login')
 
 @login_required
 def user_details(request):
-    form = SaveUserDetails(instance=request.user)  # Pass the logged-in user's instance
+    form = SaveUserDetails(instance=request.user)
 
     if request.method == 'POST':
-        form = SaveUserDetails(request.POST, request.FILES, instance=request.user)  # Update the instance
+        form = SaveUserDetails(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
+            messages.success(request,'Details saved successfully.')
             return redirect('home')
 
     context = {
